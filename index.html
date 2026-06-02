@@ -12,20 +12,22 @@
 
 <style>
   :root{
-    --bg:#0d0e10;
-    --bg-2:#121317;
-    --panel:#16181c;
-    --panel-2:#1b1e23;
-    --border:#2a2e35;
-    --border-soft:#22262c;
-    --text:#ece8e1;
-    --muted:#bcb6ab;          /* AA on --bg */
-    --faint:#9a948a;          /* AA on --bg */
-    --amber:#f0b44a;
-    --amber-deep:#d99a30;
-    --teal:#5cc2b4;
-    --teal-deep:#3f8c82;
-    --red:#ea6a52;
+    /* light, warm, muted theme — all values re-checked for WCAG AA on --bg */
+    --bg:#f4f2ec;             /* warm off-white / soft stone */
+    --bg-2:#ebe8e0;           /* slightly darker band for tracks / viz blocks */
+    --panel:#fbf9f4;          /* cards lift gently off the page */
+    --panel-2:#f0ede5;
+    --border:#d8d2c5;         /* hairline */
+    --border-soft:#e4dfd4;
+    --text:#1c1c1e;           /* deep charcoal */
+    --muted:#5c574e;          /* warm grey, 6.4:1 on --bg */
+    --faint:#6c6559;          /* AA on --bg, --bg-2 and --panel (>=4.7:1) */
+    --amber:#985f10;          /* rich ochre, 4.7:1 — links, key numbers, accents */
+    --amber-bright:#c0801c;   /* graphic fills only (bars, badges) */
+    --amber-deep:#7d4e0c;     /* deeper ochre for borders */
+    --teal:#2c6e6a;           /* deep slate-teal, 5.3:1 — interactive accent */
+    --teal-deep:#1f534f;
+    --red:#b3261e;            /* deep red, 5.8:1 — negatives */
     --serif:"Fraunces", Georgia, "Times New Roman", serif;
     --sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -47,7 +49,7 @@
     text-rendering:optimizeLegibility;
     /* faint static texture — no animation, no glow */
     background-image:
-      radial-gradient(circle at 1px 1px, rgba(236,232,225,0.035) 1px, transparent 0);
+      radial-gradient(circle at 1px 1px, rgba(28,28,30,0.045) 1px, transparent 0);
     background-size:46px 46px;
     background-attachment:fixed;
   }
@@ -68,7 +70,7 @@
 
   .skip{
     position:absolute; left:12px; top:-60px;
-    background:var(--amber); color:#15110a;
+    background:var(--amber); color:var(--bg);
     padding:10px 16px; border-radius:6px; font-weight:600;
     z-index:100; transition:top .15s ease;
   }
@@ -77,9 +79,9 @@
   /* ---------- nav ---------- */
   header.site{
     position:sticky; top:0; z-index:40;
-    background:rgba(13,14,16,0.82);
+    background:rgba(244,242,236,0.85);
     backdrop-filter:saturate(1.2) blur(8px);
-    border-bottom:1px solid var(--border-soft);
+    border-bottom:1px solid var(--border);
   }
   nav{
     max-width:var(--wrap); margin:0 auto; padding:12px 24px;
@@ -147,8 +149,8 @@
     display:inline-flex; align-items:center; gap:0.5rem; border:1px solid transparent;
   }
   .btn:hover{text-decoration:none}
-  .btn.primary{background:var(--amber); color:#15110a}
-  .btn.primary:hover{background:#f5c468}
+  .btn.primary{background:var(--amber); color:var(--bg)}
+  .btn.primary:hover{background:#a86a13}
   .btn.ghost{background:transparent; color:var(--text); border-color:var(--border)}
   .btn.ghost:hover{border-color:var(--teal); color:var(--teal)}
 
@@ -174,11 +176,11 @@
   }
   input[type=range]::-webkit-slider-thumb{
     -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
-    background:var(--teal); border:3px solid #0d0e10; cursor:pointer; box-shadow:0 0 0 1px var(--teal-deep);
+    background:var(--teal); border:3px solid var(--bg); cursor:pointer; box-shadow:0 0 0 1px var(--teal-deep);
   }
   input[type=range]::-moz-range-thumb{
     width:18px; height:18px; border-radius:50%; background:var(--teal);
-    border:3px solid #0d0e10; cursor:pointer; box-shadow:0 0 0 1px var(--teal-deep);
+    border:3px solid var(--bg); cursor:pointer; box-shadow:0 0 0 1px var(--teal-deep);
   }
 
   .dsr-bars{margin:1.6rem 0 0.4rem; display:flex; flex-direction:column; gap:0.9rem}
@@ -188,8 +190,8 @@
   .dsr-bar .track{height:14px; background:var(--bg-2); border:1px solid var(--border-soft);
     border-radius:999px; overflow:hidden}
   .dsr-bar .fill{height:100%; border-radius:999px; transition:width .25s ease}
-  .dsr-bar .fill.obs{background:var(--amber)}
-  .dsr-bar .fill.thr{background:#6f7681}
+  .dsr-bar .fill.obs{background:var(--amber-bright)}
+  .dsr-bar .fill.thr{background:#9a958c}
 
   .verdict{
     margin-top:1.5rem; padding:1rem 1.2rem; border-radius:10px;
@@ -212,7 +214,7 @@
     margin:0; letter-spacing:-0.01em; max-width:22ch}
   .pill{font-family:var(--mono); font-size:0.66rem; text-transform:uppercase; letter-spacing:0.07em;
     padding:0.3rem 0.62rem; border-radius:999px; white-space:nowrap; flex-shrink:0; border:1px solid}
-  .pill.positive{color:#0d0e10; background:var(--amber); border-color:var(--amber)}
+  .pill.positive{color:var(--bg); background:var(--amber); border-color:var(--amber)}
   .pill.marginal{color:var(--amber); background:transparent; border-color:var(--amber-deep)}
   .pill.null{color:var(--muted); background:transparent; border-color:var(--border)}
 
@@ -256,8 +258,8 @@
   .hbar{display:grid; grid-template-columns:130px 1fr 64px; align-items:center; gap:0.8rem;
     font-family:var(--mono); font-size:0.78rem}
   .hbar .lbl{color:var(--muted)}
-  .hbar .track{height:13px; background:#0d0e10; border:1px solid var(--border-soft); border-radius:4px; overflow:hidden}
-  .hbar .fill{height:100%; width:0; background:var(--amber); border-radius:3px;
+  .hbar .track{height:13px; background:#e3ddd0; border:1px solid var(--border); border-radius:4px; overflow:hidden}
+  .hbar .fill{height:100%; width:0; background:var(--amber-bright); border-radius:3px;
     transition:width 1s cubic-bezier(.2,.7,.2,1)}
   .hbar .val{text-align:right; color:var(--amber)}
   @media (max-width:520px){ .hbar{grid-template-columns:96px 1fr 56px; gap:0.5rem; font-size:0.72rem} }
@@ -271,7 +273,7 @@
   .dbar .axis::before{content:""; position:absolute; left:50%; top:-2px; bottom:-2px; width:1px; background:var(--border)}
   .dbar .seg{position:absolute; top:1px; height:13px; width:0; border-radius:3px;
     transition:width 1s cubic-bezier(.2,.7,.2,1)}
-  .dbar .seg.pos{left:50%; background:var(--amber)}
+  .dbar .seg.pos{left:50%; background:var(--amber-bright)}
   .dbar .seg.neg{right:50%; background:var(--red)}
   .dbar .val{text-align:right}
   .dbar .val.pos{color:var(--amber)} .dbar .val.neg{color:var(--red)}
@@ -295,7 +297,7 @@
   .tape.in .tape-track{clip-path:inset(0 0 0 0); transition:clip-path 1.3s ease}
   .seg-r{position:absolute; top:0; bottom:0}
   .seg-neutral{position:absolute; top:0; bottom:0; background:
-    repeating-linear-gradient(45deg, #1b1e23 0, #1b1e23 6px, #16181c 6px, #16181c 12px)}
+    repeating-linear-gradient(45deg, #ddd7ca 0, #ddd7ca 6px, #ebe8e0 6px, #ebe8e0 12px)}
   .tape-axis{position:relative; height:20px; margin-top:6px; font-family:var(--mono); font-size:0.64rem; color:var(--faint)}
   .tape-axis span{position:absolute; transform:translateX(-50%)}
   .tape-legend{display:flex; flex-wrap:wrap; gap:0.5rem 1.1rem; margin-top:1.1rem;
@@ -314,15 +316,27 @@
   .timeline .what{font-weight:600; font-family:var(--serif); font-size:1.1rem}
   .timeline p{margin:0.3rem 0 0; color:var(--muted); font-size:0.95rem; max-width:60ch}
 
-  .terminal{background:#08090b; border:1px solid var(--border); border-radius:10px; overflow:hidden; max-width:var(--measure)}
-  .terminal .bar{display:flex; align-items:center; gap:0.5rem; padding:0.6rem 0.9rem; border-bottom:1px solid var(--border)}
+  /* terminal stays dark on purpose — its colours are fixed light-on-dark, not themed */
+  .terminal{background:#0f1113; border:1px solid var(--border); border-radius:10px; overflow:hidden; max-width:var(--measure);
+    box-shadow:0 1px 3px rgba(28,28,30,0.08)}
+  .terminal .bar{display:flex; align-items:center; gap:0.5rem; padding:0.6rem 0.9rem; border-bottom:1px solid #25282d}
   .terminal .dot{width:10px; height:10px; border-radius:50%}
   .terminal .dot.r{background:#e05a4d} .terminal .dot.y{background:#e0a23c} .terminal .dot.g{background:#4aa194}
-  .terminal .ttl{font-family:var(--mono); font-size:0.72rem; color:var(--faint); margin-left:0.4rem}
+  .terminal .ttl{font-family:var(--mono); font-size:0.72rem; color:#8c887e; margin-left:0.4rem}
   .terminal pre{margin:0; padding:1rem 1.1rem; font-family:var(--mono); font-size:0.8rem; line-height:1.75;
-    color:var(--muted); overflow-x:auto}
-  .terminal .p{color:var(--teal)} .terminal .ok{color:var(--amber)} .terminal .c{color:var(--faint)}
-  .terminal .todo{color:var(--red)}
+    color:#cdc8bd; overflow-x:auto}
+  .terminal .p{color:#5fb3a8} .terminal .ok{color:#e0a23c} .terminal .c{color:#8c887e}
+  .terminal .todo{color:#e0816c}
+
+  /* ---------- skills ---------- */
+  .skills-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:1.7rem 2.4rem}
+  @media (max-width:680px){ .skills-grid{grid-template-columns:1fr} }
+  .skill-group.wide{grid-column:1 / -1}
+  .skill-group .glabel{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--teal); margin:0 0 0.75rem}
+  .skill-group ul{list-style:none; display:flex; flex-wrap:wrap; gap:0.45rem; padding:0; margin:0}
+  .skill-group li{font-family:var(--mono); font-size:0.78rem; color:var(--text);
+    border:1px solid var(--border); border-radius:6px; padding:0.33rem 0.64rem; background:var(--panel)}
 
   /* ---------- about ---------- */
   .about-grid{display:grid; grid-template-columns:1.55fr 1fr; gap:2.4rem; align-items:start}
@@ -333,11 +347,7 @@
   .portrait .placeholder{aspect-ratio:4/5; border:1px dashed var(--border); border-radius:12px;
     display:flex; align-items:center; justify-content:center; color:var(--faint); font-family:var(--mono); font-size:0.8rem; text-align:center; padding:1rem}
 
-  .chips{list-style:none; display:flex; flex-wrap:wrap; gap:0.45rem; padding:0; margin:1.6rem 0 2rem}
-  .chips li{font-family:var(--mono); font-size:0.76rem; color:var(--muted);
-    border:1px solid var(--border); border-radius:6px; padding:0.3rem 0.6rem; background:var(--panel)}
-
-  .facts{list-style:none; padding:0; margin:0; border-top:1px solid var(--border-soft)}
+  .facts{list-style:none; padding:0; margin:1.6rem 0 0; border-top:1px solid var(--border-soft)}
   .facts li{display:flex; gap:1rem; padding:0.7rem 0; border-bottom:1px solid var(--border-soft);
     font-size:0.9rem}
   .facts .fk{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em;
@@ -643,6 +653,56 @@ completed  <span class="ok">success</span>  CI  main
     </div>
   </section>
 
+  <!-- ===================== SKILLS ===================== -->
+  <section id="skills" aria-labelledby="skills-h2">
+    <div class="wrap">
+      <p class="kicker">Toolkit</p>
+      <h2 id="skills-h2">Skills</h2>
+
+      <div class="skills-grid">
+        <div class="skill-group">
+          <p class="glabel">Languages</p>
+          <ul>
+            <li>Python</li><li>R</li><li>C++</li><li>SQL</li>
+          </ul>
+        </div>
+
+        <div class="skill-group">
+          <p class="glabel">Machine learning &amp; NLP</p>
+          <ul>
+            <li>scikit-learn</li><li>XGBoost</li><li>FinBERT sentiment on filings</li>
+          </ul>
+        </div>
+
+        <div class="skill-group wide">
+          <p class="glabel">Quantitative methods</p>
+          <ul>
+            <li>time series econometrics</li><li>hidden Markov regime models</li>
+            <li>derivatives pricing (Black-Scholes)</li><li>Monte Carlo simulation</li>
+            <li>factor models</li>
+          </ul>
+        </div>
+
+        <div class="skill-group wide">
+          <p class="glabel">Statistical validation</p>
+          <ul>
+            <li>Deflated Sharpe ratio</li><li>purged k-fold with embargo</li>
+            <li>Newey-West HAC</li><li>Hansen SPA</li><li>block bootstrap</li>
+            <li>walk forward out of sample design</li>
+          </ul>
+        </div>
+
+        <div class="skill-group wide">
+          <p class="glabel">Tools &amp; infrastructure</p>
+          <ul>
+            <li>Git</li><li>GitHub Actions CI</li><li>pytest</li><li>mypy (strict)</li>
+            <li>yfinance</li><li>FRED API</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== ABOUT ===================== -->
   <section id="about" aria-labelledby="about-h2">
     <div class="wrap">
@@ -654,11 +714,6 @@ completed  <span class="ok">success</span>  CI  main
           <p>I moved from Vietnam to London to study Risk Management and Financial Engineering at Imperial College. I wanted to find out something simple. Working on my own, with free data, could I do systematic research that holds up to the standard at the top firms.</p>
           <p>The projects above are my answer. They are not about one lucky backtest. I set the thresholds before I ran anything, tested honestly, and reported the result even when I did not like it. One strategy worked at small scale, one came out marginal, one was a null. I think that mix is the most honest thing here.</p>
           <p>Away from the screen, I am competitive. In the IMC Prosperity global trading competition I finished 313th out of 18,803 teams. I box, I snowboard, and I am still working on my golf swing.</p>
-
-          <ul class="chips" aria-label="Technical skills">
-            <li>Python</li><li>pandas/NumPy/SciPy</li><li>scikit-learn/statsmodels</li>
-            <li>PyTorch/XGBoost</li><li>hmmlearn</li><li>C++</li><li>R</li><li>Git</li>
-          </ul>
 
           <ul class="facts">
             <li><span class="fk">Education</span><span class="fv">MSc RMFE, Imperial College London (2025)</span></li>
@@ -682,9 +737,9 @@ completed  <span class="ok">success</span>  CI  main
       <h2 id="contact-h2">Get in touch</h2>
       <p>I'm looking for systematic researcher and quant roles in London. The quickest way to judge me is to read the code.</p>
       <div class="btnrow">
-        <a class="btn primary" href="#" data-todo="email">Email</a>
+        <a class="btn primary" href="mailto:bachng6999@gmail.com">Email</a>
         <a class="btn ghost" href="https://github.com/hoangbach619">GitHub</a>
-        <a class="btn ghost" href="#" data-todo="linkedin">LinkedIn</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/bach99/" target="_blank" rel="noopener">LinkedIn</a>
       </div>
     </div>
   </section>
@@ -698,8 +753,8 @@ completed  <span class="ok">success</span>  CI  main
       <span>
         <a href="https://github.com/hoangbach619">GitHub</a> &nbsp;·&nbsp;
         <a href="assets/cv.pdf">CV (PDF)</a> &nbsp;·&nbsp;
-        <a href="#" data-todo="linkedin">LinkedIn</a> &nbsp;·&nbsp;
-        <a href="#" data-todo="email">Email</a>
+        <a href="https://www.linkedin.com/in/bach99/" target="_blank" rel="noopener">LinkedIn</a> &nbsp;·&nbsp;
+        <a href="mailto:bachng6999@gmail.com">Email</a>
       </span>
     </div>
   </div>
@@ -813,7 +868,7 @@ completed  <span class="ok">success</span>  CI  main
 
   /* ---------- Regime tape (real RLE series) ---------- */
   var regime={"start":"2010-03-04","end":"2026-04-30","segments":[["2010-03-04",1],["2010-04-27",2],["2010-06-15",3],["2010-06-22",0],["2010-07-08",3],["2010-08-11",0],["2010-09-02",3],["2010-09-21",0],["2010-10-01",3],["2010-11-30",1],["2010-12-07",4],["2011-04-12",1],["2011-06-06",3],["2011-06-30",1],["2011-07-27",2],["2011-11-30",3],["2012-05-31",2],["2012-06-06",3],["2013-01-11",1],["2013-06-07",4],["2014-04-11",1],["2014-09-23",3],["2014-10-09",2],["2014-10-23",3],["2014-11-11",2],["2014-11-19",3],["2014-12-10",2],["2014-12-18",3],["2014-12-31",2],["2015-02-10",3],["2015-06-29",2],["2015-07-13",3],["2015-08-20",2],["2015-10-02",0],["2016-01-06",2],["2016-02-17",0],["2016-06-22",2],["2016-06-29",0],["2016-10-10",3],["2016-11-02",2],["2016-11-09",3],["2016-12-22",1],["2018-01-26",2],["2018-02-12",4],["2018-07-12",1],["2018-08-27",4],["2018-12-07",2],["2019-01-07",4],["2019-01-18",2],["2019-03-01",1],["2019-05-07",2],["2019-07-10",3],["2019-07-31",2],["2019-09-04",0],["2020-01-23",2],["2020-04-09",0],["2021-02-03",3],["2021-11-30",2],["2021-12-07",3],["2022-01-21",4],["2023-01-12",1],["2023-01-26",4],["2023-02-07",1],["2023-02-21",4],["2023-03-21",1],["2023-08-10",4],["2024-01-03",1],["2024-04-10",4],["2024-05-28",1],["2024-08-01",4],["2024-08-14",1],["2024-10-23",4],["2024-11-25",1],["2024-12-16",4],["2025-04-04",2],["2025-04-14",4],["2025-05-06",2],["2025-05-09",4],["2025-08-06",1],["2025-10-10",4],["2025-10-20",1],["2025-11-04",4],["2025-11-26",1],["2026-01-30",4]]};
-  var stateColor={1:"#2f7a70",3:"#4aa194",4:"#caa53a",0:"#d97a2b",2:"#c0392b"};
+  var stateColor={1:"#2f7068",3:"#5b9e94",4:"#c2912f",0:"#c1762a",2:"#b23a2b"};
   var stateName={1:"Calm bull · VIX 14",3:"Mild risk-off · VIX 18",4:"Elevated vol · VIX 19",0:"Stressed · VIX 20",2:"Crisis · VIX 26"};
   var legendOrder=[1,3,4,0,2];
   var AX0=Date.UTC(2007,0,1), AX1=Date.parse(regime.end);
@@ -868,12 +923,6 @@ completed  <span class="ok">success</span>  CI  main
     var to=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ tape.classList.add("in"); to.disconnect(); } }); },{threshold:0.3});
     to.observe(tape);
   }
-
-  /* ---------- TODO links: prevent dead navigation ---------- */
-  document.querySelectorAll('[data-todo]').forEach(function(a){
-    a.addEventListener("click",function(e){ e.preventDefault(); });
-    a.setAttribute("title","Placeholder — to be filled in");
-  });
 })();
 </script>
 </body>
