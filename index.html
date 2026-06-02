@@ -3,339 +3,878 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bach Nguyen — Systematic Quant Researcher</title>
-<meta name="description" content="Systematic quant researcher. Three strategies built to journal-grade methodology: Deflated Sharpe, Newey-West HAC, purged k-fold, capacity analysis, and honest negative results.">
+<title>Bach Nguyen — Systematic trading research</title>
+<meta name="description" content="Systematic trading research by Bach Nguyen, MSc Risk Management and Financial Engineering at Imperial College London. Three strategies, tested the same way: one worked, one was marginal, one was a null.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
 <style>
-  :root {
-    --ink: #0a0a0a;
-    --paper: #fafafa;
-    --muted: #555;
-    --faint: #888;
-    --rule: #e2e2e0;
-    --accent: #b5450a;          /* restrained burnt-sienna */
-    --mono: ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", monospace;
-    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  :root{
+    --bg:#0d0e10;
+    --bg-2:#121317;
+    --panel:#16181c;
+    --panel-2:#1b1e23;
+    --border:#2a2e35;
+    --border-soft:#22262c;
+    --text:#ece8e1;
+    --muted:#bcb6ab;          /* AA on --bg */
+    --faint:#9a948a;          /* AA on --bg */
+    --amber:#f0b44a;
+    --amber-deep:#d99a30;
+    --teal:#5cc2b4;
+    --teal-deep:#3f8c82;
+    --red:#ea6a52;
+    --serif:"Fraunces", Georgia, "Times New Roman", serif;
+    --sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --wrap:980px;
+    --measure:680px;
   }
 
-  * { box-sizing: border-box; }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
 
-  html { -webkit-text-size-adjust: 100%; }
-
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 17px;
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  .wrap {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 0 24px;
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    /* faint static texture — no animation, no glow */
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(236,232,225,0.035) 1px, transparent 0);
+    background-size:46px 46px;
+    background-attachment:fixed;
   }
 
-  a {
-    color: var(--accent);
-    text-decoration: none;
-    border-bottom: 1px solid rgba(181, 69, 10, 0.28);
-    transition: border-color 0.15s ease;
-  }
-  a:hover { border-bottom-color: var(--accent); }
+  a{color:var(--amber); text-decoration:none}
+  a:hover{text-decoration:underline; text-underline-offset:3px}
 
-  /* ---------- Hero ---------- */
-  header { padding: 14vh 0 6vh; }
-
-  h1 {
-    font-size: clamp(2.4rem, 7vw, 3.4rem);
-    line-height: 1.04;
-    letter-spacing: -0.02em;
-    margin: 0 0 0.55rem;
-    font-weight: 650;
+  :focus-visible{
+    outline:2px solid var(--teal);
+    outline-offset:3px;
+    border-radius:2px;
   }
 
-  .lede {
-    font-size: 1.18rem;
-    color: var(--ink);
-    margin: 0 0 1.4rem;
-    max-width: 60ch;
+  .wrap{max-width:var(--wrap); margin:0 auto; padding:0 24px}
+
+  .mono{font-family:var(--mono)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  .skip{
+    position:absolute; left:12px; top:-60px;
+    background:var(--amber); color:#15110a;
+    padding:10px 16px; border-radius:6px; font-weight:600;
+    z-index:100; transition:top .15s ease;
+  }
+  .skip:focus{top:12px; text-decoration:none}
+
+  /* ---------- nav ---------- */
+  header.site{
+    position:sticky; top:0; z-index:40;
+    background:rgba(13,14,16,0.82);
+    backdrop-filter:saturate(1.2) blur(8px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  nav{
+    max-width:var(--wrap); margin:0 auto; padding:12px 24px;
+    display:flex; align-items:center; justify-content:space-between; gap:1rem;
+  }
+  nav .who{font-family:var(--serif); font-weight:600; font-size:1.02rem; color:var(--text)}
+  nav .who:hover{text-decoration:none}
+  nav ul{list-style:none; display:flex; gap:1.4rem; margin:0; padding:0;
+    font-family:var(--mono); font-size:0.82rem}
+  nav ul a{color:var(--muted)}
+  nav ul a:hover{color:var(--amber)}
+  @media (max-width:680px){ nav ul li.optional{display:none} }
+
+  /* ---------- section scaffolding ---------- */
+  section{padding:7rem 0 1rem}
+  .kicker{
+    font-family:var(--mono); font-size:0.74rem; letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--teal); margin:0 0 0.9rem;
+  }
+  h2{
+    font-family:var(--serif); font-weight:500;
+    font-size:clamp(1.7rem,3.6vw,2.4rem); line-height:1.12;
+    letter-spacing:-0.01em; margin:0 0 1rem; max-width:18ch;
+  }
+  .section-intro{color:var(--muted); max-width:var(--measure); margin:0 0 2.4rem; font-size:1.05rem}
+
+  /* ---------- hero ---------- */
+  .hero{padding:6.5rem 0 3rem}
+  .hero h1{
+    font-family:var(--serif); font-weight:500;
+    font-size:clamp(2.6rem,7vw,4.6rem); line-height:1.02;
+    letter-spacing:-0.025em; margin:0 0 1.6rem; max-width:14ch;
+  }
+  .hero .intro{font-size:1.18rem; color:var(--text); max-width:var(--measure); margin:0 0 2rem}
+
+  .strip-label{font-family:var(--mono); font-size:0.7rem; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--faint); margin:0 0 0.7rem}
+
+  .keywords{
+    list-style:none; margin:0 0 2rem; padding:0;
+    display:flex; flex-wrap:wrap; gap:0.5rem 0.5rem;
+    font-family:var(--mono); font-size:0.78rem;
+  }
+  .keywords li{
+    border:1px solid var(--border); color:var(--muted);
+    padding:0.32rem 0.66rem; border-radius:999px; background:var(--panel);
   }
 
-  .thesis {
-    color: var(--muted);
-    margin: 0 0 2rem;
-    max-width: 64ch;
+  .metricstrip{
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    padding:1.2rem 0; margin:0 0 1rem;
+    display:flex; flex-wrap:wrap; gap:1.2rem 2.4rem;
+  }
+  .metricstrip .m{display:flex; flex-direction:column; gap:0.15rem}
+  .metricstrip .v{font-family:var(--mono); font-size:1.4rem; font-weight:600; color:var(--text)}
+  .metricstrip .v.pos{color:var(--amber)}
+  .metricstrip .k{font-family:var(--mono); font-size:0.7rem; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--faint)}
+  .stripnote{color:var(--muted); font-size:0.92rem; max-width:var(--measure); margin:0 0 2.2rem}
+
+  .btnrow{display:flex; flex-wrap:wrap; gap:0.8rem}
+  .btn{
+    font-family:var(--mono); font-size:0.9rem; font-weight:500;
+    padding:0.72rem 1.3rem; border-radius:8px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:0.5rem; border:1px solid transparent;
+  }
+  .btn:hover{text-decoration:none}
+  .btn.primary{background:var(--amber); color:#15110a}
+  .btn.primary:hover{background:#f5c468}
+  .btn.ghost{background:transparent; color:var(--text); border-color:var(--border)}
+  .btn.ghost:hover{border-color:var(--teal); color:var(--teal)}
+
+  /* ---------- deflated sharpe widget ---------- */
+  .dsr-box{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    padding:1.8rem; max-width:var(--measure);
+  }
+  .dsr-box .boxhead{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.4rem}
+  .dsr-box .boxhead .label{font-family:var(--mono); font-size:0.84rem; color:var(--muted); letter-spacing:0.04em}
+  .dsr-box .boxhead .tag{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--teal); border:1px solid var(--teal-deep); border-radius:999px; padding:0.2rem 0.6rem}
+
+  .ctl{margin:1.3rem 0}
+  .ctl label{display:flex; justify-content:space-between; align-items:baseline; gap:1rem;
+    font-family:var(--mono); font-size:0.85rem; color:var(--muted); margin-bottom:0.5rem}
+  .ctl label .num{color:var(--text); font-weight:600; font-size:1rem}
+  .ctl .hint{font-size:0.78rem; color:var(--faint); margin-top:0.45rem; font-family:var(--sans)}
+
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; width:100%; height:4px;
+    background:var(--border); border-radius:999px; outline-offset:6px; cursor:pointer; margin:0;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+    background:var(--teal); border:3px solid #0d0e10; cursor:pointer; box-shadow:0 0 0 1px var(--teal-deep);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:18px; height:18px; border-radius:50%; background:var(--teal);
+    border:3px solid #0d0e10; cursor:pointer; box-shadow:0 0 0 1px var(--teal-deep);
   }
 
-  /* ---------- Metric row ---------- */
-  .metrics {
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-    padding: 1rem 0 1.1rem;
-    margin: 0;
-  }
-  .metrics .src {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--faint);
-    margin-bottom: 0.6rem;
-  }
-  .metrics ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem 1.5rem;
-    font-family: var(--mono);
-    font-size: 0.95rem;
-  }
-  .metrics li { white-space: nowrap; }
-  .metrics .lbl { color: var(--faint); }
-  .metrics .val { color: var(--ink); font-weight: 600; }
+  .dsr-bars{margin:1.6rem 0 0.4rem; display:flex; flex-direction:column; gap:0.9rem}
+  .dsr-bar .barlabel{display:flex; justify-content:space-between; font-family:var(--mono);
+    font-size:0.78rem; color:var(--muted); margin-bottom:0.35rem}
+  .dsr-bar .barlabel b{color:var(--text)}
+  .dsr-bar .track{height:14px; background:var(--bg-2); border:1px solid var(--border-soft);
+    border-radius:999px; overflow:hidden}
+  .dsr-bar .fill{height:100%; border-radius:999px; transition:width .25s ease}
+  .dsr-bar .fill.obs{background:var(--amber)}
+  .dsr-bar .fill.thr{background:#6f7681}
 
-  /* ---------- Sections ---------- */
-  section { padding: 6vh 0 0; }
+  .verdict{
+    margin-top:1.5rem; padding:1rem 1.2rem; border-radius:10px;
+    background:var(--bg-2); border:1px solid var(--border);
+    font-family:var(--mono); font-size:0.92rem; line-height:1.5; color:var(--muted);
+  }
+  .verdict .word{font-weight:600; font-size:1.05rem}
+  .verdict .word.clears{color:var(--amber)}
+  .verdict .word.noise{color:var(--red)}
+  .footnote{font-size:0.82rem; color:var(--faint); max-width:var(--measure); margin:1.4rem 0 0; line-height:1.55}
 
-  h2 {
-    font-size: 0.78rem;
-    font-family: var(--mono);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--faint);
-    font-weight: 600;
-    margin: 0 0 1.8rem;
+  /* ---------- projects ---------- */
+  .cards{display:flex; flex-direction:column; gap:1.6rem}
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    padding:1.8rem;
+  }
+  .card .chead{display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; flex-wrap:wrap}
+  .card h3{font-family:var(--serif); font-weight:500; font-size:1.5rem; line-height:1.15;
+    margin:0; letter-spacing:-0.01em; max-width:22ch}
+  .pill{font-family:var(--mono); font-size:0.66rem; text-transform:uppercase; letter-spacing:0.07em;
+    padding:0.3rem 0.62rem; border-radius:999px; white-space:nowrap; flex-shrink:0; border:1px solid}
+  .pill.positive{color:#0d0e10; background:var(--amber); border-color:var(--amber)}
+  .pill.marginal{color:var(--amber); background:transparent; border-color:var(--amber-deep)}
+  .pill.null{color:var(--muted); background:transparent; border-color:var(--border)}
+
+  .card .desc{color:var(--muted); margin:1rem 0 1.2rem; max-width:60ch}
+
+  .statline{list-style:none; margin:0 0 1.2rem; padding:0;
+    display:flex; flex-wrap:wrap; gap:0.5rem 1.4rem; font-family:var(--mono); font-size:0.82rem}
+  .statline li{color:var(--text)}
+  .statline .k{color:var(--faint)}
+  .statline .pos{color:var(--amber)}
+  .statline .neg{color:var(--red)}
+
+  .caveat{
+    border-left:2px solid var(--teal-deep); padding:0.2rem 0 0.2rem 1rem;
+    color:var(--muted); font-size:0.92rem; margin:0 0 1.3rem; max-width:62ch;
+  }
+  .caveat b{color:var(--teal); font-weight:600; font-family:var(--mono); font-size:0.74rem;
+    text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:0.3rem}
+
+  .figure{margin:0 0 1.3rem}
+  .figure img{width:100%; height:auto; display:block; border-radius:10px;
+    border:1px solid var(--border); background:#fff}
+  .figure figcaption{font-family:var(--mono); font-size:0.74rem; color:var(--faint); margin-top:0.55rem}
+  .figure.placeholder{
+    border:1px dashed var(--border); border-radius:10px; padding:2.4rem 1.5rem;
+    text-align:center; color:var(--faint); font-family:var(--mono); font-size:0.82rem;
   }
 
-  /* ---------- Cards ---------- */
-  .card {
-    border-top: 1px solid var(--rule);
-    padding: 2rem 0;
-  }
-  .card:last-of-type { border-bottom: 1px solid var(--rule); }
+  .clinks{display:flex; flex-wrap:wrap; gap:1.4rem; font-family:var(--mono); font-size:0.84rem; margin-top:0.3rem}
+  .clinks a{display:inline-flex; align-items:center; gap:0.4rem}
+  .clinks a .arr{color:var(--faint)}
 
-  .card-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.2rem;
-  }
-  .card h3 {
-    font-size: 1.28rem;
-    margin: 0;
-    letter-spacing: -0.01em;
-    font-weight: 640;
-  }
-  .tag {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 0.18rem 0.5rem;
-    border: 1px solid var(--rule);
-    border-radius: 3px;
-    color: var(--faint);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .tag.positive { color: var(--accent); border-color: rgba(181,69,10,0.4); }
+  /* data viz blocks inside cards */
+  .viz{margin:0.4rem 0 1.4rem; background:var(--bg-2); border:1px solid var(--border-soft);
+    border-radius:10px; padding:1.3rem}
+  .viz .vtitle{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--faint); margin:0 0 1rem}
 
-  .card p { margin: 0.7rem 0 1rem; color: var(--muted); }
+  /* horizontal bar rows (crisis) */
+  .hbars{display:flex; flex-direction:column; gap:0.6rem}
+  .hbar{display:grid; grid-template-columns:130px 1fr 64px; align-items:center; gap:0.8rem;
+    font-family:var(--mono); font-size:0.78rem}
+  .hbar .lbl{color:var(--muted)}
+  .hbar .track{height:13px; background:#0d0e10; border:1px solid var(--border-soft); border-radius:4px; overflow:hidden}
+  .hbar .fill{height:100%; width:0; background:var(--amber); border-radius:3px;
+    transition:width 1s cubic-bezier(.2,.7,.2,1)}
+  .hbar .val{text-align:right; color:var(--amber)}
+  @media (max-width:520px){ .hbar{grid-template-columns:96px 1fr 56px; gap:0.5rem; font-size:0.72rem} }
 
-  .stats {
-    list-style: none;
-    margin: 0 0 1.1rem;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 1.4rem;
-    font-family: var(--mono);
-    font-size: 0.85rem;
-  }
-  .stats li { color: var(--ink); }
-  .stats .lbl { color: var(--faint); }
+  /* diverging bar rows (IC by year) */
+  .dbars{display:flex; flex-direction:column; gap:0.5rem}
+  .dbar{display:grid; grid-template-columns:48px 1fr 64px; align-items:center; gap:0.8rem;
+    font-family:var(--mono); font-size:0.78rem}
+  .dbar .yr{color:var(--muted)}
+  .dbar .axis{position:relative; height:15px}
+  .dbar .axis::before{content:""; position:absolute; left:50%; top:-2px; bottom:-2px; width:1px; background:var(--border)}
+  .dbar .seg{position:absolute; top:1px; height:13px; width:0; border-radius:3px;
+    transition:width 1s cubic-bezier(.2,.7,.2,1)}
+  .dbar .seg.pos{left:50%; background:var(--amber)}
+  .dbar .seg.neg{right:50%; background:var(--red)}
+  .dbar .val{text-align:right}
+  .dbar .val.pos{color:var(--amber)} .dbar .val.neg{color:var(--red)}
 
-  .card-links {
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    display: flex;
-    gap: 1.4rem;
-    flex-wrap: wrap;
-  }
-  .card-links a {
-    border-bottom: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-  .card-links a:hover { border-bottom: none; text-decoration: underline; text-underline-offset: 3px; }
-  .card-links .arrow { color: var(--faint); }
+  /* capacity slider readout */
+  .cap-readout{display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap; margin:1.1rem 0 0.3rem}
+  .cap-readout .aum{font-family:var(--mono); font-size:1.5rem; font-weight:600; color:var(--text)}
+  .cap-readout .contrib{font-family:var(--mono); font-size:1.1rem; font-weight:600}
+  .cap-readout .contrib.pos{color:var(--amber)} .cap-readout .contrib.neg{color:var(--red)}
+  .cap-readout .cu{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase;
+    letter-spacing:0.08em; color:var(--faint)}
 
-  /* ---------- How I work ---------- */
-  .prose p { margin: 0 0 1.1rem; }
-  .prose strong { font-weight: 620; color: var(--ink); }
-  .prose ul {
-    margin: 1.2rem 0;
-    padding: 0;
-    list-style: none;
-  }
-  .prose ul li {
-    padding-left: 1.3rem;
-    position: relative;
-    margin-bottom: 0.55rem;
-    color: var(--muted);
-  }
-  .prose ul li::before {
-    content: "—";
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-family: var(--mono);
-  }
-  .prose ul li b { color: var(--ink); font-weight: 600; }
+  /* ---------- regime tape ---------- */
+  .tape-wrap{margin:0.5rem 0 0}
+  .tape-crises{position:relative; height:46px; margin-bottom:6px}
+  .crisis-mark{position:absolute; top:0; transform:translateX(-50%);
+    font-family:var(--mono); font-size:0.62rem; color:var(--muted); text-align:center; white-space:nowrap}
+  .crisis-mark::after{content:""; display:block; width:1px; height:10px; background:var(--border); margin:3px auto 0}
+  .tape{position:relative; height:54px; border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--bg-2)}
+  .tape-track{position:absolute; inset:0; clip-path:inset(0 100% 0 0)}
+  .tape.in .tape-track{clip-path:inset(0 0 0 0); transition:clip-path 1.3s ease}
+  .seg-r{position:absolute; top:0; bottom:0}
+  .seg-neutral{position:absolute; top:0; bottom:0; background:
+    repeating-linear-gradient(45deg, #1b1e23 0, #1b1e23 6px, #16181c 6px, #16181c 12px)}
+  .tape-axis{position:relative; height:20px; margin-top:6px; font-family:var(--mono); font-size:0.64rem; color:var(--faint)}
+  .tape-axis span{position:absolute; transform:translateX(-50%)}
+  .tape-legend{display:flex; flex-wrap:wrap; gap:0.5rem 1.1rem; margin-top:1.1rem;
+    font-family:var(--mono); font-size:0.72rem; color:var(--muted)}
+  .tape-legend .key{display:inline-flex; align-items:center; gap:0.45rem}
+  .tape-legend .sw{width:12px; height:12px; border-radius:3px; flex-shrink:0}
+  .tape-cap{color:var(--muted); font-size:0.92rem; margin:1.2rem 0 0; max-width:var(--measure)}
 
-  /* ---------- Footer ---------- */
-  footer {
-    margin-top: 7vh;
-    border-top: 1px solid var(--rule);
-    padding: 2.4rem 0 4rem;
-  }
-  .footer-links {
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 1.6rem;
-  }
-  .footer-links a { border-bottom: none; }
-  .footer-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .footer-note {
-    color: var(--faint);
-    font-size: 0.8rem;
-    margin-top: 1.4rem;
-    font-family: var(--mono);
-  }
-  .todo { color: var(--accent); }
+  /* ---------- process / timeline ---------- */
+  .timeline{list-style:none; margin:0 0 2.2rem; padding:0; border-left:1px solid var(--border)}
+  .timeline li{position:relative; padding:0 0 1.8rem 1.6rem}
+  .timeline li::before{content:""; position:absolute; left:-5px; top:6px; width:9px; height:9px;
+    border-radius:50%; background:var(--teal); border:2px solid var(--bg)}
+  .timeline li:last-child::before{background:var(--amber)}
+  .timeline .when{font-family:var(--mono); font-size:0.74rem; letter-spacing:0.04em; color:var(--amber); display:block; margin-bottom:0.25rem}
+  .timeline .what{font-weight:600; font-family:var(--serif); font-size:1.1rem}
+  .timeline p{margin:0.3rem 0 0; color:var(--muted); font-size:0.95rem; max-width:60ch}
 
-  @media (max-width: 540px) {
-    body { font-size: 16px; }
-    header { padding: 9vh 0 5vh; }
-    .card-head { gap: 0.5rem; }
+  .terminal{background:#08090b; border:1px solid var(--border); border-radius:10px; overflow:hidden; max-width:var(--measure)}
+  .terminal .bar{display:flex; align-items:center; gap:0.5rem; padding:0.6rem 0.9rem; border-bottom:1px solid var(--border)}
+  .terminal .dot{width:10px; height:10px; border-radius:50%}
+  .terminal .dot.r{background:#e05a4d} .terminal .dot.y{background:#e0a23c} .terminal .dot.g{background:#4aa194}
+  .terminal .ttl{font-family:var(--mono); font-size:0.72rem; color:var(--faint); margin-left:0.4rem}
+  .terminal pre{margin:0; padding:1rem 1.1rem; font-family:var(--mono); font-size:0.8rem; line-height:1.75;
+    color:var(--muted); overflow-x:auto}
+  .terminal .p{color:var(--teal)} .terminal .ok{color:var(--amber)} .terminal .c{color:var(--faint)}
+  .terminal .todo{color:var(--red)}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid; grid-template-columns:1.55fr 1fr; gap:2.4rem; align-items:start}
+  @media (max-width:760px){ .about-grid{grid-template-columns:1fr; gap:1.6rem} }
+  .about p{color:var(--muted); margin:0 0 1.1rem; max-width:60ch}
+  .about p:first-child{color:var(--text)}
+  .portrait img{width:100%; height:auto; border-radius:12px; border:1px solid var(--border); display:block}
+  .portrait .placeholder{aspect-ratio:4/5; border:1px dashed var(--border); border-radius:12px;
+    display:flex; align-items:center; justify-content:center; color:var(--faint); font-family:var(--mono); font-size:0.8rem; text-align:center; padding:1rem}
+
+  .chips{list-style:none; display:flex; flex-wrap:wrap; gap:0.45rem; padding:0; margin:1.6rem 0 2rem}
+  .chips li{font-family:var(--mono); font-size:0.76rem; color:var(--muted);
+    border:1px solid var(--border); border-radius:6px; padding:0.3rem 0.6rem; background:var(--panel)}
+
+  .facts{list-style:none; padding:0; margin:0; border-top:1px solid var(--border-soft)}
+  .facts li{display:flex; gap:1rem; padding:0.7rem 0; border-bottom:1px solid var(--border-soft);
+    font-size:0.9rem}
+  .facts .fk{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--faint); flex:0 0 96px}
+  .facts .fv{color:var(--muted)}
+
+  /* ---------- contact ---------- */
+  .contact p{color:var(--muted); max-width:var(--measure); font-size:1.05rem; margin:0 0 1.8rem}
+
+  /* ---------- footer ---------- */
+  footer.site{border-top:1px solid var(--border-soft); margin-top:6rem; padding:2.4rem 0 4rem}
+  footer.site .row{display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem;
+    font-family:var(--mono); font-size:0.8rem; color:var(--faint)}
+  footer.site a{color:var(--muted)}
+  .todo-flag{color:var(--red)}
+
+  /* ---------- reveal (restrained) ---------- */
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .hbar .fill, .dbar .seg, .dsr-bar .fill{transition:none !important}
+    .tape.in .tape-track{transition:none !important}
   }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <header>
-    <h1>Bach Nguyen</h1>
-    <p class="lede">Systematic quant researcher. MSc Risk Management &amp; Financial Engineering, Imperial College London.</p>
-    <p class="thesis">Three systematic strategies built to journal-grade methodology: pre-registered thresholds, Deflated Sharpe, Newey-West HAC, purged k-fold, capacity analysis, and honest negative results.</p>
+<a class="skip" href="#main">Skip to content</a>
 
-    <div class="metrics">
-      <div class="src">Volatility risk premium strategy</div>
-      <ul>
-        <li><span class="lbl">Sharpe</span> <span class="val">1.75</span> <span class="lbl">(OOS)</span></li>
-        <li><span class="lbl">DSR</span> <span class="val">&rarr; 1.0</span></li>
-        <li><span class="lbl">max DD</span> <span class="val">1.4%</span></li>
-        <li><span class="lbl">capacity</span> <span class="val">&pound;0.5&ndash;1M</span></li>
-      </ul>
-    </div>
-  </header>
-
-  <section id="work">
-    <h2>Selected research</h2>
-
-    <!-- Card 1 -->
-    <article class="card">
-      <div class="card-head">
-        <h3>Cross-Asset Volatility Risk Premium</h3>
-        <span class="tag positive">Positive result</span>
-      </div>
-      <p>VRP iron condor with a 5-state HMM regime model and regime-conditional sizing. Walk-forward out-of-sample over the full pipeline, with the Deflated Sharpe ceiling and Newey-West HAC inference reported alongside the naive numbers.</p>
-      <ul class="stats">
-        <li><span class="lbl">OOS Sharpe</span> 1.75</li>
-        <li><span class="lbl">max DD</span> &minus;1.4%</li>
-        <li><span class="lbl">DSR</span> 1.0 / 420 trials</li>
-        <li><span class="lbl">NW t</span> 3.04 @ lag 21</li>
-        <li><span class="lbl">capacity</span> &pound;0.5&ndash;1M</li>
-      </ul>
-      <div class="card-links">
-        <a href="https://github.com/hoangbach619/cross-asset-vrp">Code <span class="arrow">&rarr;</span></a>
-        <a href="https://github.com/hoangbach619/cross-asset-vrp/blob/master/methodology.qmd">Methodology <span class="arrow">&rarr;</span></a>
-      </div>
-    </article>
-
-    <!-- Card 2 -->
-    <article class="card">
-      <div class="card-head">
-        <h3>Alt-Data ETF Statistical Arbitrage</h3>
-        <span class="tag">Documented null</span>
-      </div>
-      <p>Graph plus alt-data cross-sectional model: FinBERT on 8-K filings, Bluesky and StockTwits sentiment. An honest null &mdash; the headline signal did not survive multiple-testing correction or transaction costs &mdash; but the diagnostics surfaced a contrarian 8-K sentiment effect and a post-2022 retail-sentiment regime flip worth keeping.</p>
-      <ul class="stats">
-        <li><span class="lbl">peak IC</span> +0.016 @ 3d</li>
-        <li><span class="lbl">DSR</span> 0.38</li>
-        <li><span class="lbl">8-K signal</span> IC &minus;0.04, t &minus;3.16</li>
-      </ul>
-      <div class="card-links">
-        <a href="https://github.com/hoangbach619/etf-graph-statarb">Code <span class="arrow">&rarr;</span></a>
-        <a href="https://github.com/hoangbach619/etf-graph-statarb/tree/main/docs/methodology">Methodology <span class="arrow">&rarr;</span></a>
-      </div>
-    </article>
-
-    <!-- Card 3 -->
-    <article class="card">
-      <div class="card-head">
-        <h3>Multi-Asset Trend with Crisis Alpha</h3>
-        <span class="tag">Documented null</span>
-      </div>
-      <p>Multi-horizon TSMOM plus carry across 25 ETFs with a 3-state HMM regime gate, walk-forward 2007&ndash;2023 with a true 2024&ndash;2026 holdout. The unconditional result is marginal and reported straight &mdash; no OOS Sharpe headline &mdash; but the strategy delivered positive crisis alpha in all six crisis windows.</p>
-      <ul class="stats">
-        <li><span class="lbl">DSR</span> &asymp; 0</li>
-        <li><span class="lbl">Hansen SPA p</span> 0.083</li>
-        <li><span class="lbl">GFC</span> +38%</li>
-        <li><span class="lbl">2022 inflation</span> +23%</li>
-        <li><span class="lbl">COVID</span> +14.5%</li>
-      </ul>
-      <div class="card-links">
-        <a href="https://github.com/hoangbach619/multi-asset-trend">Code <span class="arrow">&rarr;</span></a>
-        <a href="https://github.com/hoangbach619/multi-asset-trend/blob/main/docs/methodology.pdf">Methodology <span class="arrow">&rarr;</span></a>
-      </div>
-    </article>
-  </section>
-
-  <section id="how" class="prose">
-    <h2>How I work</h2>
-    <p>Every project runs on the same discipline, applied before the results are in rather than reverse-engineered to fit them:</p>
+<header class="site">
+  <nav aria-label="Primary">
+    <a class="who" href="#main">Bach Nguyen</a>
     <ul>
-      <li><b>Thresholds pre-registered</b> before seeing results, so a strategy passes or fails against a standard it can't move.</li>
-      <li><b>Deflated Sharpe reported alongside the naive Sharpe</b>, accounting for the number of trials behind any headline figure.</li>
-      <li><b>Newey-West HAC t-statistics</b> for overlapping returns, instead of standard errors that pretend the observations are independent.</li>
-      <li><b>Purged k-fold with embargo</b> to keep training and test sets from leaking across the gap.</li>
-      <li><b>Capacity simulation</b>, so a Sharpe comes with the honest size of book it survives at.</li>
-      <li><b>Negative results shipped, not buried</b> &mdash; the write-up reports what didn't work as carefully as what did.</li>
+      <li><a href="#projects">Research</a></li>
+      <li class="optional"><a href="#method">Method</a></li>
+      <li class="optional"><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="https://github.com/hoangbach619">GitHub</a></li>
     </ul>
-    <p>Two of the three strategies here are honest nulls. That is deliberate. A method that only ever produces winners isn't a method &mdash; it's a filter on the reporting. Showing the nulls in full, with the diagnostics that make them interesting, is the point.</p>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero" aria-labelledby="hero-h1">
+    <div class="wrap">
+      <h1 id="hero-h1">Systematic trading research.</h1>
+      <p class="intro">I'm Bach, an MSc student in Risk Management and Financial Engineering at Imperial College London. I build trading strategies, test them carefully, and write up what I actually find, including the ones that did not work.</p>
+
+      <p class="strip-label">How every project is tested</p>
+      <ul class="keywords">
+        <li>pre-registered thresholds</li>
+        <li>deflated sharpe ratio</li>
+        <li>newey-west HAC t-stats</li>
+        <li>purged k-fold with embargo</li>
+        <li>capacity analysis</li>
+        <li>honest negative results</li>
+      </ul>
+
+      <p class="strip-label">Cross-Asset Volatility Risk Premium strategy</p>
+      <div class="metricstrip" role="group" aria-label="Headline metrics for the Volatility Risk Premium strategy">
+        <div class="m"><span class="v pos">1.75</span><span class="k">OOS Sharpe</span></div>
+        <div class="m"><span class="v">&minus;1.4%</span><span class="k">Max drawdown</span></div>
+        <div class="m"><span class="v">&rarr; 1.0</span><span class="k">Deflated Sharpe</span></div>
+        <div class="m"><span class="v">3.04</span><span class="k">NW t-stat</span></div>
+      </div>
+      <p class="stripnote">These figures are from the Cross-Asset Volatility Risk Premium strategy, one of three. The two that did not work are further down.</p>
+
+      <div class="btnrow">
+        <a class="btn primary" href="#projects">See the research</a>
+        <a class="btn ghost" href="https://github.com/hoangbach619">GitHub</a>
+      </div>
+    </div>
   </section>
 
-  <footer>
-    <div class="footer-links">
-      <a href="https://github.com/hoangbach619">GitHub</a>
-      <a href="assets/cv.pdf">CV (PDF)</a>
-      <a href="#" class="todo">LinkedIn &middot; TODO</a>
-      <a href="#" class="todo">Email &middot; TODO</a>
-    </div>
-    <p class="footer-note">London &middot; <span class="todo">TODO: LinkedIn URL and email address to be filled in</span></p>
-  </footer>
+  <!-- ===================== DEFLATED SHARPE WIDGET ===================== -->
+  <section id="method" aria-labelledby="dsr-h2">
+    <div class="wrap">
+      <p class="kicker">The core idea</p>
+      <h2 id="dsr-h2">Why a strong backtest can still be luck</h2>
+      <p class="section-intro">If you test enough strategies, one of them will look good purely by chance. The Deflated Sharpe ratio adjusts for how many you tried. Drag the sliders to see how many backtests it takes before pure noise would beat a given Sharpe.</p>
 
-</div>
+      <div class="dsr-box">
+        <div class="boxhead">
+          <span class="label">The multiple testing correction</span>
+          <span class="tag" aria-hidden="true">drag the sliders</span>
+        </div>
+
+        <div class="ctl">
+          <label for="s1">Observed (naive) Sharpe <span class="num" id="s1v">1.75</span></label>
+          <input id="s1" type="range" min="0.2" max="3" step="0.01" value="1.75"
+                 aria-label="Observed naive Sharpe ratio"
+                 aria-valuetext="Observed Sharpe 1.75">
+          <p class="hint">1.75 is the VRP strategy's walk forward out of sample Sharpe.</p>
+        </div>
+
+        <div class="ctl">
+          <label for="s2">Number of backtests tried <span class="num" id="s2v">420</span></label>
+          <input id="s2" type="range" min="1" max="1000" step="1" value="420"
+                 aria-label="Number of backtests tried"
+                 aria-valuetext="420 backtests tried">
+          <p class="hint">More backtests means a higher bar for a real result. 420 is the VRP trial count.</p>
+        </div>
+
+        <div class="dsr-bars" aria-hidden="true">
+          <div class="dsr-bar">
+            <div class="barlabel"><span>Observed Sharpe</span><b id="obsLbl">1.75</b></div>
+            <div class="track"><div class="fill obs" id="obsFill" style="width:58%"></div></div>
+          </div>
+          <div class="dsr-bar">
+            <div class="barlabel"><span>Noise threshold</span><b id="thrLbl">1.34</b></div>
+            <div class="track"><div class="fill thr" id="thrFill" style="width:45%"></div></div>
+          </div>
+        </div>
+
+        <p class="verdict" id="verdict" role="status" aria-live="polite">
+          <span class="word clears" id="vWord">CLEARS</span><br>
+          At an observed Sharpe of 1.75 with 420 backtests, the noise threshold is 1.34. It clears by 0.41.
+        </p>
+      </div>
+
+      <p class="footnote">This is a simplified illustration. The threshold is the expected best Sharpe from N independent trials under the null of no skill, assuming about five years of daily returns. Each strategy's actual Deflated Sharpe is computed properly in its methodology PDF.</p>
+    </div>
+  </section>
+
+  <!-- ===================== PROJECTS ===================== -->
+  <section id="projects" aria-labelledby="proj-h2">
+    <div class="wrap">
+      <p class="kicker">Research</p>
+      <h2 id="proj-h2">Three strategies. One worked, one was marginal, one did not.</h2>
+      <p class="section-intro">They cover volatility, trend, and cross sectional signals, so the portfolio has some range. Each one was tested the same way.</p>
+
+      <div class="cards">
+
+        <!-- Card 1 -->
+        <article class="card">
+          <div class="chead">
+            <h3>Cross-Asset Volatility Risk Premium</h3>
+            <span class="pill positive">Positive result</span>
+          </div>
+          <p class="desc">I harvest the volatility risk premium by selling SPX iron condors, with position sizing driven by a 5 state Gaussian HMM regime model. Options are priced with Black-Scholes using VIX as the implied vol, and everything is validated walk forward, out of sample.</p>
+
+          <figure class="figure">
+            <img src="assets/vrp-walkforward.png" alt="Three-panel chart from the VRP strategy. Top: cumulative profit and loss rebased to 100 over 2015 to 2024, showing the in-sample baseline, the walk-forward out-of-sample line, and a flat managed engine, all trending steadily upward. Middle: drawdown series for the three engines, staying shallow. Bottom: HMM state assignment over time.">
+            <figcaption>Walk-forward out-of-sample equity, drawdown and regime state. Source: cross-asset-vrp/results/figures/walk_forward.png</figcaption>
+          </figure>
+
+          <ul class="statline">
+            <li><span class="k">OOS Sharpe</span> <span class="pos">1.75</span></li>
+            <li><span class="k">Max DD</span> <span class="neg">&minus;1.4%</span></li>
+            <li><span class="k">Deflated Sharpe</span> &rarr; 1.0</li>
+            <li><span class="k">NW t (lag 21)</span> 3.04</li>
+            <li><span class="k">Capacity</span> &pound;0.5&ndash;1M</li>
+          </ul>
+
+          <p class="caveat"><b>Caveat</b>The capacity ceiling is about &pound;0.5 to 1M, so this is an edge at small capital, not an institutional product. The backtest uses VIX as the implied vol, which understates the real spread you would pay trading live condors.</p>
+
+          <div class="clinks">
+            <a href="https://github.com/hoangbach619/cross-asset-vrp">Code <span class="arr">&rarr;</span></a>
+            <a href="https://github.com/hoangbach619/cross-asset-vrp/blob/master/methodology.qmd">Methodology <span class="arr">&rarr;</span></a>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="card">
+          <div class="chead">
+            <h3>Multi-Asset Trend with Crisis Alpha</h3>
+            <span class="pill marginal">Marginal, validated out of sample</span>
+          </div>
+          <p class="desc">Multi horizon time series momentum and carry across 25 ETFs, with a 3 state HMM regime gate. I trained walk forward on 2007 to 2023 and kept 2024 to 2026 as a true holdout that I did not touch until the end. In sample the result is weak after deflation, but it passed the pre registered out of sample test, and the crisis alpha pattern is clean.</p>
+
+          <div class="viz">
+            <p class="vtitle">Crisis-window return (real, 6 of 6 positive)</p>
+            <div class="hbars" id="crisisBars" aria-hidden="true"></div>
+            <p class="sr-only">Crisis-window returns: GFC 2008 plus 38.16 percent, Inflation 2022 first half plus 23.26 percent, COVID 2020 plus 14.54 percent, Vol spike 2018 plus 13.15 percent, UK gilt 2022 plus 4.80 percent, Eurozone 2011 plus 2.26 percent.</p>
+          </div>
+
+          <div class="viz">
+            <p class="vtitle">Capacity — drag to set assets under management</p>
+            <input id="cap" type="range" min="0" max="1000" step="1" value="385"
+                   aria-label="Assets under management for the trend strategy"
+                   aria-valuetext="1 million dollars, net Sharpe contribution plus 0.139">
+            <div class="cap-readout">
+              <span class="aum" id="capAum">$1.0M</span>
+              <span class="contrib pos" id="capVal">+0.139</span>
+              <span class="cu">net Sharpe contribution</span>
+            </div>
+            <p class="hint">Measured points: $1M gives +0.139, $10M gives &minus;0.031, $100M gives &minus;0.412. The line between them follows a square root market impact model. Past roughly $10M the edge is gone.</p>
+          </div>
+
+          <ul class="statline">
+            <li><span class="k">In-sample Sharpe</span> 0.485</li>
+            <li><span class="k">OOS Sharpe</span> <span class="pos">0.876</span></li>
+            <li><span class="k">Crisis windows</span> <span class="pos">+6/6</span></li>
+            <li><span class="k">Capacity</span> $1&ndash;10M</li>
+          </ul>
+
+          <p class="caveat"><b>Caveat</b>The in sample Sharpe of 0.485 does not pass the Deflated Sharpe test at the full trial count, and the Hansen SPA p value is 0.083. The 2.3 year holdout is short and could be driven by one or two events, so I report the 0.876 without overselling it.</p>
+
+          <div class="clinks">
+            <a href="https://github.com/hoangbach619/multi-asset-trend">Code <span class="arr">&rarr;</span></a>
+            <a href="https://github.com/hoangbach619/multi-asset-trend/blob/main/docs/methodology.pdf">Methodology PDF <span class="arr">&rarr;</span></a>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="card">
+          <div class="chead">
+            <h3>Alt-Data ETF Statistical Arbitrage</h3>
+            <span class="pill null">Null result</span>
+          </div>
+          <p class="desc">A cross sectional model on 28 ETFs that combines a graph layer, the Laplacian eigenspectrum, with alternative data: FinBERT sentiment on 8-K filings, plus Bluesky and StockTwits text. The signal did not survive multiple testing correction or trading costs, and I report it that way.</p>
+
+          <div class="viz">
+            <p class="vtitle">Information coefficient by year (real)</p>
+            <div class="dbars" id="icBars" aria-hidden="true"></div>
+            <p class="sr-only">Information coefficient by year: 2018 plus 0.028, 2019 minus 0.074, 2020 minus 0.005, 2021 minus 0.095, 2022 plus 0.032, 2023 minus 0.113, 2024 minus 0.074, 2025 minus 0.051, 2026 plus 0.065. Most years are negative.</p>
+          </div>
+
+          <ul class="statline">
+            <li><span class="k">Peak IC (3d)</span> +0.016</li>
+            <li><span class="k">Deflated Sharpe</span> 0.38</li>
+            <li><span class="k">8-K signal t</span> <span class="neg">&minus;3.16</span></li>
+            <li><span class="k">Verdict</span> null</li>
+          </ul>
+
+          <p class="caveat"><b>Caveat</b>I did find a contrarian 8-K sentiment signal (IC &minus;0.04, t &minus;3.16), with the opposite sign to the published literature, and a shift in retail sentiment after 2022 that the aggregate number hides. The Congressional trading layer was a clean null. For me the interesting part was in what failed.</p>
+
+          <div class="clinks">
+            <a href="https://github.com/hoangbach619/etf-graph-statarb">Code <span class="arr">&rarr;</span></a>
+            <a href="https://github.com/hoangbach619/etf-graph-statarb/tree/main/docs/methodology">Methodology <span class="arr">&rarr;</span></a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== REGIME TAPE ===================== -->
+  <section id="regimes" aria-labelledby="tape-h2">
+    <div class="wrap">
+      <p class="kicker">Signal</p>
+      <h2 id="tape-h2">Market regimes since 2007</h2>
+      <p class="section-intro">The 5 state hidden Markov model that sizes my volatility book, labelled by its average VIX. The band is drawn from the real saved state series; it begins in 2010 where that series starts.</p>
+
+      <figure class="tape-wrap" aria-label="Timeline of market regime states from 2010 to 2026, coloured from calm to crisis, with six historical crisis windows marked above.">
+        <div class="tape-crises" id="tapeCrises" aria-hidden="true"></div>
+        <div class="tape" id="tape">
+          <div class="seg-neutral" id="tapeNeutral" title="No regime data before 2010"></div>
+          <div class="tape-track" id="tapeTrack" aria-hidden="true"></div>
+        </div>
+        <div class="tape-axis" id="tapeAxis" aria-hidden="true"></div>
+        <div class="tape-legend" id="tapeLegend" aria-hidden="true"></div>
+        <figcaption class="tape-cap">This is the regime signal my volatility and trend strategies size positions from.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== PROCESS ===================== -->
+  <section id="process" aria-labelledby="proc-h2">
+    <div class="wrap">
+      <p class="kicker">Timeline</p>
+      <h2 id="proc-h2">Twelve weeks, three projects</h2>
+      <p class="section-intro">A self directed build. I finished each project and locked its result before starting the next.</p>
+
+      <ol class="timeline">
+        <li>
+          <span class="when">Days 1&ndash;28 &middot; VRP iron condor</span>
+          <span class="what">Volatility risk premium</span>
+          <p>Data pipeline, the condor backtest engine, the 5 state HMM and regime sizing. A cross asset extension that did not work, kept in as a documented negative result. Full DSR, Newey-West, and capacity checks.</p>
+        </li>
+        <li>
+          <span class="when">Days 29&ndash;49 &middot; Alt-data stat arb</span>
+          <span class="what">Cross sectional signals</span>
+          <p>FinBERT on 8-K filings, about 560k Bluesky posts, StockTwits, the graph layer, purged k fold. Shipped as a null, with one real contrarian 8-K finding.</p>
+        </li>
+        <li>
+          <span class="when">Days 50&ndash;84 &middot; Multi-asset trend</span>
+          <span class="what">Trend and carry</span>
+          <p>Trend and carry, regime gate, tail hedge, a true out of sample holdout, Hansen SPA, block bootstrap. It passed the pre registered out of sample test. In sample was weak and I say so.</p>
+        </li>
+        <li>
+          <span class="when">Now</span>
+          <span class="what">Combining the three</span>
+          <p>Now I am combining the three under risk parity and building the live execution layer, as an engineering exercise rather than an alpha claim.</p>
+        </li>
+      </ol>
+
+      <div class="terminal" role="img" aria-label="Terminal output from the multi-asset-trend repository: pytest reports 243 passed, mypy strict reports success with no issues, and the latest CI run on main completed successfully.">
+        <div class="bar" aria-hidden="true">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="ttl">multi-asset-trend — checks</span>
+        </div>
+<pre aria-hidden="true"><span class="p">$</span> pytest -q
+<span class="ok">243 passed</span> in 41.2s
+<span class="p">$</span> mypy --strict src/
+<span class="ok">Success: no issues found</span>
+<span class="p">$</span> gh run list --limit 1
+completed  <span class="ok">success</span>  CI  main
+<span class="c"># SEED=42 everywhere · n_jobs=1 · no bfill · type hints throughout</span>
+<span class="todo"># TODO: extend with real pytest counts from cross-asset-vrp and etf-graph-statarb</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ABOUT ===================== -->
+  <section id="about" aria-labelledby="about-h2">
+    <div class="wrap">
+      <p class="kicker">Background</p>
+      <h2 id="about-h2">About me</h2>
+
+      <div class="about-grid">
+        <div class="about">
+          <p>I moved from Vietnam to London to study Risk Management and Financial Engineering at Imperial College. I wanted to find out something simple. Working on my own, with free data, could I do systematic research that holds up to the standard at the top firms.</p>
+          <p>The projects above are my answer. They are not about one lucky backtest. I set the thresholds before I ran anything, tested honestly, and reported the result even when I did not like it. One strategy worked at small scale, one came out marginal, one was a null. I think that mix is the most honest thing here.</p>
+          <p>Away from the screen, I am competitive. In the IMC Prosperity global trading competition I finished 313th out of 18,803 teams. I box, I snowboard, and I am still working on my golf swing.</p>
+
+          <ul class="chips" aria-label="Technical skills">
+            <li>Python</li><li>pandas/NumPy/SciPy</li><li>scikit-learn/statsmodels</li>
+            <li>PyTorch/XGBoost</li><li>hmmlearn</li><li>C++</li><li>R</li><li>Git</li>
+          </ul>
+
+          <ul class="facts">
+            <li><span class="fk">Education</span><span class="fv">MSc RMFE, Imperial College London (2025)</span></li>
+            <li><span class="fk">Based</span><span class="fv">London, UK</span></li>
+            <li><span class="fk">Competition</span><span class="fv">IMC Prosperity, 313 / 18,803 teams</span></li>
+            <li><span class="fk">Languages</span><span class="fv">English and Vietnamese fluent, Japanese basic</span></li>
+          </ul>
+        </div>
+
+        <div class="portrait">
+          <img src="assets/portrait.jpg" alt="Portrait of Bach Nguyen, wearing a dark suit and tie against a plain grey background.">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section id="contact" class="contact" aria-labelledby="contact-h2">
+    <div class="wrap">
+      <p class="kicker">Contact</p>
+      <h2 id="contact-h2">Get in touch</h2>
+      <p>I'm looking for systematic researcher and quant roles in London. The quickest way to judge me is to read the code.</p>
+      <div class="btnrow">
+        <a class="btn primary" href="#" data-todo="email">Email</a>
+        <a class="btn ghost" href="https://github.com/hoangbach619">GitHub</a>
+        <a class="btn ghost" href="#" data-todo="linkedin">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="row">
+      <span>Bach Nguyen — London</span>
+      <span>
+        <a href="https://github.com/hoangbach619">GitHub</a> &nbsp;·&nbsp;
+        <a href="assets/cv.pdf">CV (PDF)</a> &nbsp;·&nbsp;
+        <a href="#" data-todo="linkedin">LinkedIn</a> &nbsp;·&nbsp;
+        <a href="#" data-todo="email">Email</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- Acklam inverse normal CDF ---------- */
+  function invNorm(p){
+    var a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+    var b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+    var c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+    var d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
+    var pl=0.02425, ph=1-pl, q, r;
+    if(p<=0) return -Infinity;
+    if(p>=1) return Infinity;
+    if(p<pl){ q=Math.sqrt(-2*Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+    if(p<=ph){ q=p-0.5; r=q*q; return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1); }
+    q=Math.sqrt(-2*Math.log(1-p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1);
+  }
+  var GAMMA=0.5772156649, SE=1/Math.sqrt(5);
+  function expMaxN(N){ if(N<2) return 0; return (1-GAMMA)*invNorm(1-1.0/N)+GAMMA*invNorm(1-1.0/(N*Math.E)); }
+  function threshold(N){ return Math.max(0, expMaxN(N)*SE); }
+
+  /* ---------- Deflated Sharpe widget ---------- */
+  var s1=document.getElementById("s1"), s2=document.getElementById("s2");
+  var s1v=document.getElementById("s1v"), s2v=document.getElementById("s2v");
+  var obsFill=document.getElementById("obsFill"), thrFill=document.getElementById("thrFill");
+  var obsLbl=document.getElementById("obsLbl"), thrLbl=document.getElementById("thrLbl");
+  var vWord=document.getElementById("vWord"), verdict=document.getElementById("verdict");
+  function pct(x){ return Math.max(0,Math.min(100, x/3*100)); }
+  function updateDSR(){
+    var obs=parseFloat(s1.value), N=parseInt(s2.value,10);
+    var thr=threshold(N);
+    s1v.textContent=obs.toFixed(2); s2v.textContent=N;
+    obsLbl.textContent=obs.toFixed(2); thrLbl.textContent=thr.toFixed(2);
+    obsFill.style.width=pct(obs)+"%"; thrFill.style.width=pct(thr)+"%";
+    var clears=obs>=thr, margin=Math.abs(obs-thr).toFixed(2);
+    s1.setAttribute("aria-valuetext","Observed Sharpe "+obs.toFixed(2));
+    s2.setAttribute("aria-valuetext",N+" backtests tried");
+    if(clears){
+      vWord.textContent="CLEARS"; vWord.className="word clears";
+      verdict.innerHTML='<span class="word clears">CLEARS</span><br>At an observed Sharpe of '+obs.toFixed(2)+' with '+N+' backtests, the noise threshold is '+thr.toFixed(2)+'. It clears by '+margin+'.';
+    } else {
+      vWord.textContent="NOISE"; vWord.className="word noise";
+      verdict.innerHTML='<span class="word noise">NOISE</span><br>At an observed Sharpe of '+obs.toFixed(2)+' with '+N+' backtests, the noise threshold is '+thr.toFixed(2)+'. Pure chance would beat it by '+margin+'.';
+    }
+  }
+  s1.addEventListener("input",updateDSR); s2.addEventListener("input",updateDSR); updateDSR();
+
+  /* ---------- Capacity slider (trend) ---------- */
+  var cap=document.getElementById("cap"), capAum=document.getElementById("capAum"), capVal=document.getElementById("capVal");
+  var LOMIN=Math.log10(0.5e6), LOMAX=Math.log10(200e6);
+  function capContrib(x){ // x = log10(AUM)
+    if(x<=7) return 0.139+(x-6)*(-0.170);
+    return -0.031+(x-7)*(-0.381);
+  }
+  function fmtAum(aum){
+    if(aum>=1e9) return "$"+(aum/1e9).toFixed(2)+"B";
+    if(aum>=1e8) return "$"+Math.round(aum/1e6)+"M";
+    if(aum>=1e7) return "$"+(aum/1e6).toFixed(0)+"M";
+    return "$"+(aum/1e6).toFixed(1)+"M";
+  }
+  function updateCap(){
+    var f=parseInt(cap.value,10)/1000, x=LOMIN+(LOMAX-LOMIN)*f, aum=Math.pow(10,x);
+    var c=capContrib(x), pos=c>=0, sign=pos?"+":"−", txt=sign+Math.abs(c).toFixed(3);
+    capAum.textContent=fmtAum(aum);
+    capVal.textContent=txt; capVal.className="contrib "+(pos?"pos":"neg");
+    cap.setAttribute("aria-valuetext", fmtAum(aum)+", net Sharpe contribution "+(pos?"plus ":"minus ")+Math.abs(c).toFixed(3));
+  }
+  cap.addEventListener("input",updateCap); updateCap();
+
+  /* ---------- Crisis bars (real) ---------- */
+  var crisis=[["GFC 2008",38.16],["Inflation 2022 H1",23.26],["COVID 2020",14.54],["Vol spike 2018",13.15],["UK gilt 2022",4.80],["Eurozone 2011",2.26]];
+  var cmax=38.16, cb=document.getElementById("crisisBars");
+  crisis.forEach(function(d){
+    var w=(d[1]/cmax*100).toFixed(1);
+    var row=document.createElement("div"); row.className="hbar";
+    row.innerHTML='<span class="lbl">'+d[0]+'</span><span class="track"><span class="fill" data-w="'+w+'%"></span></span><span class="val">+'+d[1].toFixed(2)+'%</span>';
+    cb.appendChild(row);
+  });
+
+  /* ---------- IC diverging bars (real) ---------- */
+  var ic=[["2018",0.028],["2019",-0.074],["2020",-0.005],["2021",-0.095],["2022",0.032],["2023",-0.113],["2024",-0.074],["2025",-0.051],["2026",0.065]];
+  var imax=0.113, ib=document.getElementById("icBars");
+  ic.forEach(function(d){
+    var pos=d[1]>=0, w=(Math.abs(d[1])/imax*50).toFixed(1);
+    var sign=pos?"+":"−", val=sign+Math.abs(d[1]).toFixed(3);
+    var row=document.createElement("div"); row.className="dbar";
+    row.innerHTML='<span class="yr">'+d[0]+'</span><span class="axis"><span class="seg '+(pos?"pos":"neg")+'" data-w="'+w+'%"></span></span><span class="val '+(pos?"pos":"neg")+'">'+val+'</span>';
+    ib.appendChild(row);
+  });
+
+  /* ---------- grow bars on reveal ---------- */
+  function growIn(container){
+    container.querySelectorAll("[data-w]").forEach(function(el){
+      if(reduce){ el.style.width=el.getAttribute("data-w"); }
+      else { requestAnimationFrame(function(){ el.style.width=el.getAttribute("data-w"); }); }
+    });
+  }
+  function observe(el, cb){
+    if(!("IntersectionObserver" in window) || reduce){ cb(); return; }
+    var o=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ cb(); o.disconnect(); } }); },{threshold:0.25});
+    o.observe(el);
+  }
+  observe(cb, function(){ growIn(cb); });
+  observe(ib, function(){ growIn(ib); });
+
+  /* ---------- Regime tape (real RLE series) ---------- */
+  var regime={"start":"2010-03-04","end":"2026-04-30","segments":[["2010-03-04",1],["2010-04-27",2],["2010-06-15",3],["2010-06-22",0],["2010-07-08",3],["2010-08-11",0],["2010-09-02",3],["2010-09-21",0],["2010-10-01",3],["2010-11-30",1],["2010-12-07",4],["2011-04-12",1],["2011-06-06",3],["2011-06-30",1],["2011-07-27",2],["2011-11-30",3],["2012-05-31",2],["2012-06-06",3],["2013-01-11",1],["2013-06-07",4],["2014-04-11",1],["2014-09-23",3],["2014-10-09",2],["2014-10-23",3],["2014-11-11",2],["2014-11-19",3],["2014-12-10",2],["2014-12-18",3],["2014-12-31",2],["2015-02-10",3],["2015-06-29",2],["2015-07-13",3],["2015-08-20",2],["2015-10-02",0],["2016-01-06",2],["2016-02-17",0],["2016-06-22",2],["2016-06-29",0],["2016-10-10",3],["2016-11-02",2],["2016-11-09",3],["2016-12-22",1],["2018-01-26",2],["2018-02-12",4],["2018-07-12",1],["2018-08-27",4],["2018-12-07",2],["2019-01-07",4],["2019-01-18",2],["2019-03-01",1],["2019-05-07",2],["2019-07-10",3],["2019-07-31",2],["2019-09-04",0],["2020-01-23",2],["2020-04-09",0],["2021-02-03",3],["2021-11-30",2],["2021-12-07",3],["2022-01-21",4],["2023-01-12",1],["2023-01-26",4],["2023-02-07",1],["2023-02-21",4],["2023-03-21",1],["2023-08-10",4],["2024-01-03",1],["2024-04-10",4],["2024-05-28",1],["2024-08-01",4],["2024-08-14",1],["2024-10-23",4],["2024-11-25",1],["2024-12-16",4],["2025-04-04",2],["2025-04-14",4],["2025-05-06",2],["2025-05-09",4],["2025-08-06",1],["2025-10-10",4],["2025-10-20",1],["2025-11-04",4],["2025-11-26",1],["2026-01-30",4]]};
+  var stateColor={1:"#2f7a70",3:"#4aa194",4:"#caa53a",0:"#d97a2b",2:"#c0392b"};
+  var stateName={1:"Calm bull · VIX 14",3:"Mild risk-off · VIX 18",4:"Elevated vol · VIX 19",0:"Stressed · VIX 20",2:"Crisis · VIX 26"};
+  var legendOrder=[1,3,4,0,2];
+  var AX0=Date.UTC(2007,0,1), AX1=Date.parse(regime.end);
+  function span(){ return AX1-AX0; }
+  function xp(d){ return (Date.parse(d)-AX0)/span()*100; }
+
+  // neutral pre-data block (2007 -> data start)
+  var dataStart=regime.start;
+  var neutral=document.getElementById("tapeNeutral");
+  neutral.style.left="0%"; neutral.style.width=xp(dataStart)+"%";
+
+  // regime segments
+  var track=document.getElementById("tapeTrack"), segs=regime.segments;
+  for(var i=0;i<segs.length;i++){
+    var d0=segs[i][0], st=segs[i][1];
+    var d1=(i+1<segs.length)?segs[i+1][0]:regime.end;
+    var L=xp(d0), W=xp(d1)-L;
+    var div=document.createElement("div"); div.className="seg-r";
+    div.style.left=L+"%"; div.style.width=W+"%"; div.style.background=stateColor[st];
+    track.appendChild(div);
+  }
+
+  // axis ticks
+  var axis=document.getElementById("tapeAxis");
+  [2008,2011,2014,2017,2020,2023,2026].forEach(function(y){
+    var s=document.createElement("span"); s.textContent=y;
+    s.style.left=((Date.UTC(y,0,1)-AX0)/span()*100)+"%"; axis.appendChild(s);
+  });
+
+  // crisis markers
+  var crises=[["GFC 2008","2008-11-01"],["Eurozone 2011","2011-09-15"],["Vol spike 2018","2018-06-01"],["COVID 2020","2020-03-15"],["Inflation 2022","2022-03-15"],["UK gilt 2022","2022-10-01"]];
+  var cm=document.getElementById("tapeCrises");
+  crises.forEach(function(c,idx){
+    var m=document.createElement("div"); m.className="crisis-mark";
+    m.textContent=c[0]; m.style.left=xp(c[1])+"%";
+    m.style.top=(idx%2?"15px":"0px");          // stagger to avoid 2022 label collision
+    cm.appendChild(m);
+  });
+
+  // legend
+  var leg=document.getElementById("tapeLegend");
+  legendOrder.forEach(function(st){
+    var k=document.createElement("span"); k.className="key";
+    k.innerHTML='<span class="sw" style="background:'+stateColor[st]+'"></span>'+stateName[st];
+    leg.appendChild(k);
+  });
+
+  // draw-in
+  var tape=document.getElementById("tape");
+  if(reduce || !("IntersectionObserver" in window)){ tape.classList.add("in"); }
+  else {
+    var to=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ tape.classList.add("in"); to.disconnect(); } }); },{threshold:0.3});
+    to.observe(tape);
+  }
+
+  /* ---------- TODO links: prevent dead navigation ---------- */
+  document.querySelectorAll('[data-todo]').forEach(function(a){
+    a.addEventListener("click",function(e){ e.preventDefault(); });
+    a.setAttribute("title","Placeholder — to be filled in");
+  });
+})();
+</script>
 </body>
 </html>
