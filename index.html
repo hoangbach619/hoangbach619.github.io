@@ -12,22 +12,22 @@
 
 <style>
   :root{
-    /* light, warm, muted theme — all values re-checked for WCAG AA on --bg */
-    --bg:#f4f2ec;             /* warm off-white / soft stone */
-    --bg-2:#ebe8e0;           /* slightly darker band for tracks / viz blocks */
-    --panel:#fbf9f4;          /* cards lift gently off the page */
-    --panel-2:#f0ede5;
-    --border:#d8d2c5;         /* hairline */
-    --border-soft:#e4dfd4;
-    --text:#1c1c1e;           /* deep charcoal */
-    --muted:#5c574e;          /* warm grey, 6.4:1 on --bg */
-    --faint:#6c6559;          /* AA on --bg, --bg-2 and --panel (>=4.7:1) */
-    --amber:#985f10;          /* rich ochre, 4.7:1 — links, key numbers, accents */
-    --amber-bright:#c0801c;   /* graphic fills only (bars, badges) */
-    --amber-deep:#7d4e0c;     /* deeper ochre for borders */
-    --teal:#2c6e6a;           /* deep slate-teal, 5.3:1 — interactive accent */
-    --teal-deep:#1f534f;
-    --red:#b3261e;            /* deep red, 5.8:1 — negatives */
+    /* refined dark theme — all values re-checked for WCAG AA on --bg */
+    --bg:#0c0f16;             /* deep ink / charcoal-navy, not pure black */
+    --bg-2:#11151f;           /* recessed band for tracks / viz blocks */
+    --panel:#141925;          /* raised card surface */
+    --panel-2:#1a2030;
+    --border:#28303f;         /* hairline light */
+    --border-soft:#1e2533;
+    --text:#e8eaef;           /* warm off-white, 15.9:1 */
+    --muted:#a3abba;          /* secondary grey, 8.3:1 on --bg */
+    --faint:#8a93a3;          /* AA on --bg, --bg-2 and --panel (>=5.6:1) */
+    --amber:#e0a92e;          /* amber/ochre, 9:1 — links, key numbers, accents */
+    --amber-bright:#e6b23c;   /* graphic fills only (bars, badges) */
+    --amber-deep:#a8771a;     /* deeper ochre for borders */
+    --teal:#54d2c8;           /* muted teal, 10.4:1 — interactive accent */
+    --teal-deep:#2f8d85;
+    --red:#ec6a52;            /* warm red, 6.2:1 — negatives */
     --serif:"Fraunces", Georgia, "Times New Roman", serif;
     --sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -49,7 +49,7 @@
     text-rendering:optimizeLegibility;
     /* faint static texture — no animation, no glow */
     background-image:
-      radial-gradient(circle at 1px 1px, rgba(28,28,30,0.045) 1px, transparent 0);
+      radial-gradient(circle at 1px 1px, rgba(232,234,239,0.035) 1px, transparent 0);
     background-size:46px 46px;
     background-attachment:fixed;
   }
@@ -79,7 +79,7 @@
   /* ---------- nav ---------- */
   header.site{
     position:sticky; top:0; z-index:40;
-    background:rgba(244,242,236,0.85);
+    background:rgba(12,15,22,0.82);
     backdrop-filter:saturate(1.2) blur(8px);
     border-bottom:1px solid var(--border);
   }
@@ -150,7 +150,7 @@
   }
   .btn:hover{text-decoration:none}
   .btn.primary{background:var(--amber); color:var(--bg)}
-  .btn.primary:hover{background:#a86a13}
+  .btn.primary:hover{background:#eab63f}
   .btn.ghost{background:transparent; color:var(--text); border-color:var(--border)}
   .btn.ghost:hover{border-color:var(--teal); color:var(--teal)}
 
@@ -191,7 +191,7 @@
     border-radius:999px; overflow:hidden}
   .dsr-bar .fill{height:100%; border-radius:999px; transition:width .25s ease}
   .dsr-bar .fill.obs{background:var(--amber-bright)}
-  .dsr-bar .fill.thr{background:#9a958c}
+  .dsr-bar .fill.thr{background:#6f7787}
 
   .verdict{
     margin-top:1.5rem; padding:1rem 1.2rem; border-radius:10px;
@@ -258,7 +258,7 @@
   .hbar{display:grid; grid-template-columns:130px 1fr 64px; align-items:center; gap:0.8rem;
     font-family:var(--mono); font-size:0.78rem}
   .hbar .lbl{color:var(--muted)}
-  .hbar .track{height:13px; background:#e3ddd0; border:1px solid var(--border); border-radius:4px; overflow:hidden}
+  .hbar .track{height:13px; background:#0a0d13; border:1px solid var(--border); border-radius:4px; overflow:hidden}
   .hbar .fill{height:100%; width:0; background:var(--amber-bright); border-radius:3px;
     transition:width 1s cubic-bezier(.2,.7,.2,1)}
   .hbar .val{text-align:right; color:var(--amber)}
@@ -297,7 +297,7 @@
   .tape.in .tape-track{clip-path:inset(0 0 0 0); transition:clip-path 1.3s ease}
   .seg-r{position:absolute; top:0; bottom:0}
   .seg-neutral{position:absolute; top:0; bottom:0; background:
-    repeating-linear-gradient(45deg, #ddd7ca 0, #ddd7ca 6px, #ebe8e0 6px, #ebe8e0 12px)}
+    repeating-linear-gradient(45deg, #1a2030 0, #1a2030 6px, #11151f 6px, #11151f 12px)}
   .tape-axis{position:relative; height:20px; margin-top:6px; font-family:var(--mono); font-size:0.64rem; color:var(--faint)}
   .tape-axis span{position:absolute; transform:translateX(-50%)}
   .tape-legend{display:flex; flex-wrap:wrap; gap:0.5rem 1.1rem; margin-top:1.1rem;
@@ -318,7 +318,7 @@
 
   /* terminal stays dark on purpose — its colours are fixed light-on-dark, not themed */
   .terminal{background:#0f1113; border:1px solid var(--border); border-radius:10px; overflow:hidden; max-width:var(--measure);
-    box-shadow:0 1px 3px rgba(28,28,30,0.08)}
+    box-shadow:0 1px 3px rgba(0,0,0,0.35)}
   .terminal .bar{display:flex; align-items:center; gap:0.5rem; padding:0.6rem 0.9rem; border-bottom:1px solid #25282d}
   .terminal .dot{width:10px; height:10px; border-radius:50%}
   .terminal .dot.r{background:#e05a4d} .terminal .dot.y{background:#e0a23c} .terminal .dot.g{background:#4aa194}
@@ -363,6 +363,28 @@
     font-family:var(--mono); font-size:0.8rem; color:var(--faint)}
   footer.site a{color:var(--muted)}
   .todo-flag{color:var(--red)}
+
+  /* ---------- monte carlo ---------- */
+  .mc-box, .surf-box{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:1.5rem 1.6rem}
+  .mc-controls{display:flex; flex-wrap:wrap; gap:1rem 1.8rem; align-items:end; margin-bottom:1.4rem}
+  .mc-controls .ctl{margin:0; flex:1 1 210px; min-width:170px}
+  .mc-controls .runbtn{flex:0 0 auto}
+  .mc-canvas{display:block; width:100%; height:280px; border-radius:10px; background:var(--bg-2); border:1px solid var(--border-soft)}
+  .mc-hist{display:block; width:100%; height:140px; border-radius:10px; background:var(--bg-2); border:1px solid var(--border-soft); margin-top:0.9rem}
+  .viz-cap{font-size:0.82rem; color:var(--faint); max-width:var(--measure); margin:1.3rem 0 0; line-height:1.55}
+  @media (max-width:600px){ .mc-canvas{height:220px} }
+
+  /* ---------- volatility surface ---------- */
+  .surf-stage{position:relative; width:100%; height:400px; border-radius:10px; overflow:hidden;
+    background:linear-gradient(180deg,#0e1422,#0a0d14); border:1px solid var(--border-soft);
+    cursor:grab; touch-action:none}
+  .surf-stage:active{cursor:grabbing}
+  .surf-stage canvas{display:block; width:100%; height:100%}
+  .surf-hint{position:absolute; right:10px; bottom:8px; font-family:var(--mono); font-size:0.66rem;
+    color:var(--faint); background:rgba(12,15,22,0.55); padding:0.25rem 0.55rem; border-radius:5px; pointer-events:none}
+  .surf-axes{position:absolute; left:12px; top:10px; font-family:var(--mono); font-size:0.64rem;
+    color:var(--faint); line-height:1.5; pointer-events:none}
+  @media (max-width:600px){ .surf-stage{height:320px} }
 
   /* ---------- reveal (restrained) ---------- */
   @media (prefers-reduced-motion:reduce){
@@ -470,6 +492,38 @@
       </div>
 
       <p class="footnote">This is a simplified illustration. The threshold is the expected best Sharpe from N independent trials under the null of no skill, assuming about five years of daily returns. Each strategy's actual Deflated Sharpe is computed properly in its methodology PDF.</p>
+    </div>
+  </section>
+
+  <!-- ===================== MONTE CARLO ===================== -->
+  <section id="montecarlo" aria-labelledby="mc-h2">
+    <div class="wrap">
+      <p class="kicker">Method</p>
+      <h2 id="mc-h2">Monte Carlo simulation</h2>
+      <p class="section-intro">Simulating many possible price paths to see the whole distribution of outcomes, rather than a single point guess. Adjust the inputs, or reseed.</p>
+
+      <div class="mc-box">
+        <div class="mc-controls">
+          <div class="ctl">
+            <label for="mcPaths">Number of paths <span class="num" id="mcPathsV">200</span></label>
+            <input id="mcPaths" type="range" min="50" max="500" step="10" value="200"
+                   aria-label="Number of simulated paths" aria-valuetext="200 paths">
+          </div>
+          <div class="ctl">
+            <label for="mcVol">Annual volatility <span class="num" id="mcVolV">30%</span></label>
+            <input id="mcVol" type="range" min="10" max="60" step="1" value="30"
+                   aria-label="Annual volatility, percent" aria-valuetext="30 percent annual volatility">
+          </div>
+          <button type="button" class="btn ghost runbtn" id="mcRun"
+                  aria-label="Run the simulation again with a new random seed">Run again</button>
+        </div>
+
+        <canvas class="mc-canvas" id="mcCanvas" width="1280" height="560" aria-hidden="true"></canvas>
+        <canvas class="mc-hist" id="mcHist" width="1280" height="280" aria-hidden="true"></canvas>
+        <p class="sr-only" id="mcSummary">Monte Carlo chart: <span id="mcSrN">200</span> simulated geometric Brownian motion price paths fan out from a common starting value of 100 over one year at <span id="mcSrV">30</span> percent annual volatility, with a histogram of their final values showing most outcomes near the start and a long right tail.</p>
+      </div>
+
+      <p class="viz-cap">An illustrative Monte Carlo simulation of geometric Brownian motion. This is a demonstration of the method, the same family of simulation behind the option pricing and capacity analysis in my projects. It is not a forecast or a result.</p>
     </div>
   </section>
 
@@ -603,6 +657,25 @@
         <div class="tape-legend" id="tapeLegend" aria-hidden="true"></div>
         <figcaption class="tape-cap">This is the regime signal my volatility and trend strategies size positions from.</figcaption>
       </figure>
+    </div>
+  </section>
+
+  <!-- ===================== VOLATILITY SURFACE ===================== -->
+  <section id="volsurface" aria-labelledby="surf-h2">
+    <div class="wrap">
+      <p class="kicker">Volatility</p>
+      <h2 id="surf-h2">Implied volatility surface</h2>
+      <p class="section-intro">Implied volatility is not a single number. It varies by strike and by maturity, forming a surface. Drag to orbit the view.</p>
+
+      <div class="surf-box">
+        <div class="surf-stage" id="surfStage" role="img"
+             aria-label="A three dimensional implied volatility surface. Implied volatility rises for strikes away from the money, forming a smile that is most pronounced at short maturities and flattens for longer maturities. Drag to orbit the view.">
+          <div class="surf-axes" aria-hidden="true">vol ↑<br>moneyness →<br>maturity ↘</div>
+          <span class="surf-hint" aria-hidden="true">drag to orbit</span>
+        </div>
+      </div>
+
+      <p class="viz-cap">An illustrative implied volatility surface, the volatility smile across strikes and maturities. This is the kind of object my volatility risk premium strategy works with. The surface shown is representative, not live market data.</p>
     </div>
   </section>
 
@@ -868,7 +941,7 @@ completed  <span class="ok">success</span>  CI  main
 
   /* ---------- Regime tape (real RLE series) ---------- */
   var regime={"start":"2010-03-04","end":"2026-04-30","segments":[["2010-03-04",1],["2010-04-27",2],["2010-06-15",3],["2010-06-22",0],["2010-07-08",3],["2010-08-11",0],["2010-09-02",3],["2010-09-21",0],["2010-10-01",3],["2010-11-30",1],["2010-12-07",4],["2011-04-12",1],["2011-06-06",3],["2011-06-30",1],["2011-07-27",2],["2011-11-30",3],["2012-05-31",2],["2012-06-06",3],["2013-01-11",1],["2013-06-07",4],["2014-04-11",1],["2014-09-23",3],["2014-10-09",2],["2014-10-23",3],["2014-11-11",2],["2014-11-19",3],["2014-12-10",2],["2014-12-18",3],["2014-12-31",2],["2015-02-10",3],["2015-06-29",2],["2015-07-13",3],["2015-08-20",2],["2015-10-02",0],["2016-01-06",2],["2016-02-17",0],["2016-06-22",2],["2016-06-29",0],["2016-10-10",3],["2016-11-02",2],["2016-11-09",3],["2016-12-22",1],["2018-01-26",2],["2018-02-12",4],["2018-07-12",1],["2018-08-27",4],["2018-12-07",2],["2019-01-07",4],["2019-01-18",2],["2019-03-01",1],["2019-05-07",2],["2019-07-10",3],["2019-07-31",2],["2019-09-04",0],["2020-01-23",2],["2020-04-09",0],["2021-02-03",3],["2021-11-30",2],["2021-12-07",3],["2022-01-21",4],["2023-01-12",1],["2023-01-26",4],["2023-02-07",1],["2023-02-21",4],["2023-03-21",1],["2023-08-10",4],["2024-01-03",1],["2024-04-10",4],["2024-05-28",1],["2024-08-01",4],["2024-08-14",1],["2024-10-23",4],["2024-11-25",1],["2024-12-16",4],["2025-04-04",2],["2025-04-14",4],["2025-05-06",2],["2025-05-09",4],["2025-08-06",1],["2025-10-10",4],["2025-10-20",1],["2025-11-04",4],["2025-11-26",1],["2026-01-30",4]]};
-  var stateColor={1:"#2f7068",3:"#5b9e94",4:"#c2912f",0:"#c1762a",2:"#b23a2b"};
+  var stateColor={1:"#3a9d92",3:"#5cc2b4",4:"#d9b441",0:"#e08a3c",2:"#e05a48"};
   var stateName={1:"Calm bull · VIX 14",3:"Mild risk-off · VIX 18",4:"Elevated vol · VIX 19",0:"Stressed · VIX 20",2:"Crisis · VIX 26"};
   var legendOrder=[1,3,4,0,2];
   var AX0=Date.UTC(2007,0,1), AX1=Date.parse(regime.end);
@@ -923,6 +996,155 @@ completed  <span class="ok">success</span>  CI  main
     var to=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ tape.classList.add("in"); to.disconnect(); } }); },{threshold:0.3});
     to.observe(tape);
   }
+
+  /* ============ Monte Carlo simulation ============ */
+  (function(){
+    var cv=document.getElementById("mcCanvas"); if(!cv) return;
+    var hv=document.getElementById("mcHist");
+    var ctx=cv.getContext("2d"), hx=hv.getContext("2d");
+    var pPaths=document.getElementById("mcPaths"), pVol=document.getElementById("mcVol");
+    var pPathsV=document.getElementById("mcPathsV"), pVolV=document.getElementById("mcVolV");
+    var runBtn=document.getElementById("mcRun");
+    var srN=document.getElementById("mcSrN"), srV=document.getElementById("mcSrV");
+    var COL={teal:"rgba(84,210,200,0.20)", red:"rgba(236,106,82,0.16)",
+             amber:"#e6b23c", redSolid:"#ec6a52", faint:"#8a93a3", grid:"#28303f", start:"#aeb6c4"};
+    var S0=100, steps=120, seed=20240601, raf=null;
+    var paths=[], terminals=[], yMin=S0, yMax=S0, dimP, dimH;
+
+    function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+    function sizeCanvas(c){var r=c.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr);c.getContext("2d").setTransform(dpr,0,0,dpr,0,0);return {w:r.width,h:r.height};}
+
+    function simulate(){
+      var rng=mulberry32(seed), N=+pPaths.value, sigma=(+pVol.value)/100, dt=1/steps;
+      paths=[]; terminals=[]; yMin=S0; yMax=S0; var spare=null;
+      function gauss(){ if(spare!==null){var s=spare;spare=null;return s;} var u,v,s2; do{u=rng()*2-1;v=rng()*2-1;s2=u*u+v*v;}while(s2>=1||s2===0); var m=Math.sqrt(-2*Math.log(s2)/s2); spare=v*m; return u*m; }
+      for(var p=0;p<N;p++){
+        var arr=new Float64Array(steps+1); arr[0]=S0; var S=S0;
+        for(var i=1;i<=steps;i++){ S=S*Math.exp(-0.5*sigma*sigma*dt + sigma*Math.sqrt(dt)*gauss()); arr[i]=S; if(S<yMin)yMin=S; if(S>yMax)yMax=S; }
+        paths.push(arr); terminals.push(S);
+      }
+      var pad=(yMax-yMin)*0.05||1; yMin-=pad; yMax+=pad;
+    }
+    function px(i,d){ var L=42,R=12; return L+(i/steps)*(d.w-L-R); }
+    function py(v,d){ var T=12,B=22; return T+(1-(v-yMin)/(yMax-yMin))*(d.h-T-B); }
+    function drawAxesP(d){
+      ctx.clearRect(0,0,d.w,d.h);
+      ctx.font="10px ui-monospace,Menlo,monospace"; ctx.fillStyle=COL.faint;
+      ctx.setLineDash([4,4]); ctx.strokeStyle=COL.start; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(px(0,d),py(S0,d)); ctx.lineTo(px(steps,d),py(S0,d)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillText("100",6,py(S0,d)+3); ctx.fillText("t=0",px(0,d),d.h-7); ctx.fillText("1y",px(steps,d)-12,d.h-7);
+    }
+    function drawSeg(from,to,d){
+      ctx.lineWidth=1;
+      for(var p=0;p<paths.length;p++){
+        var arr=paths[p]; ctx.strokeStyle = terminals[p]>=S0 ? COL.teal : COL.red;
+        ctx.beginPath(); ctx.moveTo(px(from,d),py(arr[from],d));
+        for(var i=from+1;i<=to;i++) ctx.lineTo(px(i,d),py(arr[i],d));
+        ctx.stroke();
+      }
+    }
+    function drawHist(){
+      var d=dimH; hx.clearRect(0,0,d.w,d.h);
+      var bins=26, lo=yMin, hi=yMax, w=(hi-lo)/bins, counts=new Array(bins).fill(0), maxc=0, k;
+      for(k=0;k<terminals.length;k++){ var b=Math.floor((terminals[k]-lo)/w); if(b<0)b=0; if(b>=bins)b=bins-1; counts[b]++; }
+      for(k=0;k<bins;k++) if(counts[k]>maxc) maxc=counts[k];
+      var L=42,R=12,T=12,B=18, pw=d.w-L-R, ph=d.h-T-B;
+      function X(v){ return L+(v-lo)/(hi-lo)*pw; }
+      for(var bi=0;bi<bins;bi++){
+        var cx=L+(bi/bins)*pw, bw=pw/bins-1, bh=maxc?counts[bi]/maxc*ph:0, center=lo+(bi+0.5)*w;
+        hx.fillStyle = center>=S0 ? COL.amber : COL.redSolid;
+        hx.fillRect(cx,T+ph-bh,bw,bh);
+      }
+      hx.setLineDash([4,4]); hx.strokeStyle=COL.start; hx.lineWidth=1;
+      hx.beginPath(); hx.moveTo(X(S0),T); hx.lineTo(X(S0),T+ph); hx.stroke(); hx.setLineDash([]);
+      hx.font="10px ui-monospace,Menlo,monospace"; hx.fillStyle=COL.faint;
+      hx.fillText("final value distribution",L,d.h-5);
+      hx.fillText("start 100",Math.min(X(S0)+4,d.w-58),T+9);
+    }
+    function render(animated){
+      dimP=sizeCanvas(cv); dimH=sizeCanvas(hv); drawAxesP(dimP);
+      srN.textContent=pPaths.value; srV.textContent=pVol.value;
+      if(animated && !reduce){
+        var drawn=0;
+        (function stepFrame(){ var next=Math.min(steps,drawn+4); drawSeg(drawn,next,dimP); drawn=next;
+          if(drawn<steps) raf=requestAnimationFrame(stepFrame); else drawHist(); })();
+      } else { drawSeg(0,steps,dimP); drawHist(); }
+    }
+    function run(animated){ if(raf) cancelAnimationFrame(raf); simulate(); render(animated); }
+
+    pPaths.addEventListener("input",function(){ pPathsV.textContent=pPaths.value; pPaths.setAttribute("aria-valuetext",pPaths.value+" paths"); run(false); });
+    pVol.addEventListener("input",function(){ pVolV.textContent=pVol.value+"%"; pVol.setAttribute("aria-valuetext",pVol.value+" percent annual volatility"); run(false); });
+    runBtn.addEventListener("click",function(){ seed=(Math.random()*1e9)>>>0; run(true); });
+
+    var did=false; function first(){ if(did)return; did=true; run(true); }
+    if(!("IntersectionObserver" in window)){ first(); }
+    else { var mo=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ first(); mo.disconnect(); }});},{threshold:0.2}); mo.observe(document.getElementById("montecarlo")); }
+    var rt; window.addEventListener("resize",function(){ if(!did)return; clearTimeout(rt); rt=setTimeout(function(){ run(false); },150); });
+  })();
+
+  /* ============ Implied volatility surface (three.js, lazy) ============ */
+  (function(){
+    var stage=document.getElementById("surfStage"); if(!stage) return;
+    var inited=false;
+    function hasWebGL(){ try{ var c=document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl")||c.getContext("experimental-webgl"))); }catch(e){ return false; } }
+    function ivFunc(mon,mat){ var smile=0.55*(mon-1)*(mon-1)/(0.18+mat), skew=-0.10*(mon-1), term=0.05*Math.sqrt(mat); return 0.16+smile+skew+term; }
+    function heat(v){ function mix(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
+      var teal=[0x54,0xd2,0xc8],amb=[0xe6,0xb2,0x3c],red=[0xec,0x6a,0x52];
+      return v<0.5 ? mix(teal,amb,v/0.5) : mix(amb,red,(v-0.5)/0.5); }
+
+    function fallback2D(){
+      var cv=document.createElement("canvas"); stage.appendChild(cv);
+      function draw(){ var r=stage.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2);
+        cv.width=r.width*dpr; cv.height=r.height*dpr; var g=cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0);
+        var W=r.width,H=r.height,nx=44,ny=30,pl=10,pt=10, pw=(W-2*pl)/nx, ph=(H-2*pt)/ny, mn=1e9,mx=-1e9,vals=[],i,j;
+        for(j=0;j<ny;j++){var row=[];for(i=0;i<nx;i++){var v=ivFunc(0.7+0.6*i/(nx-1),0.1+1.9*j/(ny-1));row.push(v);if(v<mn)mn=v;if(v>mx)mx=v;}vals.push(row);}
+        for(j=0;j<ny;j++)for(i=0;i<nx;i++){var c=heat((vals[j][i]-mn)/(mx-mn));g.fillStyle="rgb("+(c[0]|0)+","+(c[1]|0)+","+(c[2]|0)+")";g.fillRect(pl+i*pw,pt+j*ph,pw+1,ph+1);}
+      }
+      draw(); window.addEventListener("resize",draw);
+    }
+
+    function init3D(){
+      var W=stage.clientWidth,H=stage.clientHeight;
+      var scene=new THREE.Scene();
+      var camera=new THREE.PerspectiveCamera(45,W/H,0.1,100); camera.position.set(0,2.0,3.5); camera.lookAt(0,0,0);
+      var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2)); renderer.setSize(W,H);
+      stage.appendChild(renderer.domElement);
+      var group=new THREE.Group(); scene.add(group);
+
+      var nx=48,nz=48,sx=2.2,sz=2.2,hy=1.4;
+      var geo=new THREE.PlaneGeometry(sx,sz,nx-1,nz-1); geo.rotateX(-Math.PI/2);
+      var pos=geo.attributes.position, colors=[], ivs=[], mn=1e9,mx=-1e9,k;
+      for(k=0;k<pos.count;k++){ var mon=1+(pos.getX(k)/sx)*0.6, mat=Math.max(0.05,1.05+(pos.getZ(k)/sz)*1.9), v=ivFunc(mon,mat); ivs.push(v); if(v<mn)mn=v; if(v>mx)mx=v; }
+      for(k=0;k<pos.count;k++){ var nv=(ivs[k]-mn)/(mx-mn); pos.setY(k,(nv-0.5)*hy); var c=heat(nv); colors.push(c[0]/255,c[1]/255,c[2]/255); }
+      pos.needsUpdate=true;
+      geo.setAttribute("color",new THREE.Float32BufferAttribute(colors,3)); geo.computeVertexNormals();
+      var mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:0.62,metalness:0.05,side:THREE.DoubleSide}));
+      group.add(mesh);
+      group.add(new THREE.LineSegments(new THREE.WireframeGeometry(geo), new THREE.LineBasicMaterial({color:0x0c0f16,transparent:true,opacity:0.16})));
+      scene.add(new THREE.AmbientLight(0xffffff,0.58));
+      var dir=new THREE.DirectionalLight(0xffffff,0.9); dir.position.set(2,4,2); scene.add(dir);
+      var dir2=new THREE.DirectionalLight(0x9fb6d0,0.35); dir2.position.set(-3,2,-2); scene.add(dir2);
+
+      var autoRot=!reduce, dragging=false, lx=0, ly=0, rotY=0.5, tilt=0.18;
+      function setRot(){ group.rotation.y=rotY; group.rotation.x=tilt; } setRot();
+      stage.addEventListener("pointerdown",function(e){ dragging=true; lx=e.clientX; ly=e.clientY; try{stage.setPointerCapture(e.pointerId);}catch(_){} });
+      stage.addEventListener("pointermove",function(e){ if(!dragging)return; rotY+=(e.clientX-lx)*0.008; tilt+=(e.clientY-ly)*0.006; tilt=Math.max(-0.15,Math.min(1.1,tilt)); lx=e.clientX; ly=e.clientY; setRot(); });
+      function up(){ dragging=false; } stage.addEventListener("pointerup",up); stage.addEventListener("pointercancel",up); stage.addEventListener("pointerleave",up);
+
+      (function animate(){ requestAnimationFrame(animate); if(autoRot && !dragging){ rotY+=0.0025; group.rotation.y=rotY; } renderer.render(scene,camera); })();
+      window.addEventListener("resize",function(){ var w=stage.clientWidth,h=stage.clientHeight; if(!w||!h)return; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h); });
+    }
+
+    function start(){ if(inited)return; inited=true;
+      if(!hasWebGL()){ fallback2D(); return; }
+      var s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+      s.onload=function(){ try{ init3D(); }catch(e){ fallback2D(); } }; s.onerror=fallback2D;
+      document.head.appendChild(s);
+    }
+    if(!("IntersectionObserver" in window)){ start(); }
+    else { var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ start(); io.disconnect(); }});},{threshold:0.15}); io.observe(stage); }
+  })();
 })();
 </script>
 </body>
