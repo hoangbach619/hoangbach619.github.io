@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bach Nguyen — Systematic trading research</title>
-<meta name="description" content="Systematic trading research by Bach Nguyen, MSc Risk Management and Financial Engineering at Imperial College London. Three strategies, tested the same way: one worked, one was marginal, one was a null.">
+<meta name="description" content="Systematic trading research by Bach Nguyen, MSc Risk Management and Financial Engineering at Imperial College London. An SSRN working paper on look-ahead contamination in LLM equity signals, plus three strategies tested the same way: one worked, one was marginal, one was a null.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -256,6 +256,17 @@
     color:var(--faint); margin:0 0 1rem}
 
   /* horizontal bar rows (crisis) */
+  /* leakage chart */
+  .leak-canvas{width:100%; height:auto; display:block; border-radius:8px; background:#0a0d13;
+               border:1px solid var(--border)}
+  .leak-legend{display:flex; flex-wrap:wrap; gap:1.1rem; margin-top:0.7rem;
+               font-family:var(--mono); font-size:0.7rem; color:var(--faint)}
+  .leak-legend span{display:inline-flex; align-items:center; gap:0.4rem}
+  .leak-legend .sw{width:16px; height:0; border-top:2px solid currentColor; display:inline-block}
+  .leak-legend .sw.win{height:9px; border:0; background:#232a38; border-radius:2px}
+  .leak-legend .sw.est{border-top-style:dotted; color:var(--teal)}
+  .leak-legend .sw.doc{border-top-style:dashed; color:var(--amber)}
+
   .hbars{display:flex; flex-direction:column; gap:0.6rem}
   .hbar{display:grid; grid-template-columns:130px 1fr 64px; align-items:center; gap:0.8rem;
     font-family:var(--mono); font-size:0.78rem}
@@ -439,7 +450,7 @@
         <div class="m"><span class="v">&rarr; 1.0</span><span class="k">Deflated Sharpe</span></div>
         <div class="m"><span class="v">3.04</span><span class="k">NW t-stat</span></div>
       </div>
-      <p class="stripnote">These figures are from the Cross-Asset Volatility Risk Premium strategy, one of three. The two that did not work are further down.</p>
+      <p class="stripnote">These figures are from the Cross-Asset Volatility Risk Premium strategy. The one that was marginal and the one that failed are further down, with the numbers that failed them.</p>
 
       <div class="btnrow">
         <a class="btn primary" href="#projects">See the research</a>
@@ -534,10 +545,45 @@
   <section id="projects" aria-labelledby="proj-h2">
     <div class="wrap">
       <p class="kicker">Research</p>
-      <h2 id="proj-h2">Three strategies. One worked, one was marginal, one did not.</h2>
-      <p class="section-intro">They cover volatility, trend, and cross sectional signals, so the portfolio has some range. Each one was tested the same way.</p>
+      <h2 id="proj-h2">Four projects. A paper, a strategy that worked, one that was marginal, one that was not.</h2>
+      <p class="section-intro">A working paper on contamination in LLM equity signals, then volatility, trend and cross sectional strategies. Every one was tested the same way, and the ones that failed are here with the numbers that failed them.</p>
 
       <div class="cards">
+
+        <!-- Card 0 — LLM contamination -->
+        <article class="card">
+          <div class="chead">
+            <h3>Look-Ahead Contamination in LLM Equity Signals</h3>
+            <span class="pill positive">SSRN working paper</span>
+          </div>
+          <p class="desc">An LLM asked to rank stocks on a past date might be forecasting, or it might be remembering. Inside its training window those two look identical. I measured the difference in the units a desk actually reads, a Sharpe ratio, and built two detectors that need no realised returns at all, so a vendor's stated cutoff becomes something you can check rather than something you take on trust.</p>
+
+          <div class="viz">
+            <p class="vtitle">The same months, read two ways (real)</p>
+            <canvas class="leak-canvas" id="leakCanvas" width="1280" height="620" aria-hidden="true"></canvas>
+            <div class="leak-legend" aria-hidden="true">
+              <span><i class="sw win"></i>inside training window</span>
+              <span><i class="sw est"></i>boundary located from responses, 2022-12</span>
+              <span><i class="sw doc"></i>vendor's documented cutoff, 2023-12</span>
+            </div>
+            <p class="sr-only">Two stacked charts over the same 2021 to 2026 monthly axis for Llama 3.3 70B. The upper chart is the cross sectional information coefficient scored against realised returns, which is mostly positive before 2023 and scatters around zero after. The lower chart is month to month repetition in the model's own answers, needing no returns, which is noisy and near zero before 2023 and then jumps to a flat plateau around plus 0.41. Both turn at the same point, roughly a year before the vendor's documented cutoff. A six month gap in the middle is the buffer window, which was never queried.</p>
+          </div>
+
+          <ul class="statline">
+            <li><span class="k">IC in window</span> <span class="pos">+0.166</span></li>
+            <li><span class="k">IC out</span> <span class="neg">&minus;0.019</span></li>
+            <li><span class="k">Sharpe in / out</span> <span class="pos">2.14</span> / 0.40</li>
+            <li><span class="k">Re-pairing null</span> p 0.003</li>
+            <li><span class="k">Boundary located</span> <span class="pos">1 yr early</span></li>
+          </ul>
+
+          <p class="caveat"><b>Caveat</b>One subject carries the full contrast, so this is a protocol and a demonstration, not a claim about language models as a class. The sharpest version of the effect, measured inside a single behavioural segment, sits at p 0.059 and does not clear five percent. The provider retired the model mid project, so its cached responses are now the only record and no part of the result can be re-run against the vendor.</p>
+
+          <div class="clinks">
+            <a href="https://github.com/hoangbach619/llm-alpha-leakage">Code <span class="arr">&rarr;</span></a>
+            <a href="https://github.com/hoangbach619/llm-alpha-leakage/blob/preprint/docs/methodology.qmd">Methodology <span class="arr">&rarr;</span></a>
+          </div>
+        </article>
 
         <!-- Card 1 -->
         <article class="card">
@@ -686,7 +732,7 @@
   <section id="process" aria-labelledby="proc-h2">
     <div class="wrap">
       <p class="kicker">Timeline</p>
-      <h2 id="proc-h2">Twelve weeks, three projects</h2>
+      <h2 id="proc-h2">How the work was built</h2>
       <p class="section-intro">A self directed build. I finished each project and locked its result before starting the next.</p>
 
       <ol class="timeline">
@@ -706,9 +752,14 @@
           <p>Trend and carry, regime gate, tail hedge, a true out of sample holdout, Hansen SPA, block bootstrap. It passed the pre registered out of sample test. In sample was weak and I say so.</p>
         </li>
         <li>
+          <span class="when">Jun&ndash;Sep 2026 &middot; LLM contamination</span>
+          <span class="what">From strategy to method</span>
+          <p>A different kind of problem: not whether a signal works, but whether you can trust the test. Cross sectional scoring of a recall probe, a dollar neutral translation into Sharpe terms, two detectors that need no realised outcomes, and a reproduction gate that fails the build if any published number stops following from the code. Written up as a working paper.</p>
+        </li>
+        <li>
           <span class="when">Now</span>
-          <span class="what">Combining the three</span>
-          <p>Now I am combining the three under risk parity and building the live execution layer, as an engineering exercise rather than an alpha claim.</p>
+          <span class="what">Combining the strategies</span>
+          <p>Combining the three strategies under risk parity and building the live execution layer, as an engineering exercise rather than an alpha claim.</p>
         </li>
       </ol>
 
@@ -723,8 +774,7 @@
 <span class="ok">Success: no issues found</span>
 <span class="p">$</span> gh run list --limit 1
 completed  <span class="ok">success</span>  CI  main
-<span class="c"># SEED=42 everywhere · n_jobs=1 · no bfill · type hints throughout</span>
-<span class="todo"># TODO: extend with real pytest counts from cross-asset-vrp and etf-graph-statarb</span></pre>
+<span class="c"># SEED=42 everywhere · n_jobs=1 · no bfill · type hints throughout</span></pre>
       </div>
     </div>
   </section>
@@ -926,6 +976,104 @@ completed  <span class="ok">success</span>  CI  main
     row.innerHTML='<span class="yr">'+d[0]+'</span><span class="axis"><span class="seg '+(pos?"pos":"neg")+'" data-w="'+w+'%"></span></span><span class="val '+(pos?"pos":"neg")+'">'+val+'</span>';
     ib.appendChild(row);
   });
+
+  /* ---------- Leakage: IC vs template, both real, same axis ---------- */
+  (function(){
+    var cv=document.getElementById("leakCanvas"); if(!cv) return;
+    var IC=[["2021-10",0.1475],["2021-11",-0.3332],["2021-12",-0.3401],["2022-01",0.1865],["2022-02",0.211],["2022-03",0.1837],["2022-04",0.7297],["2022-05",0.0813],["2022-06",0.5556],["2022-07",0.3428],["2022-08",0.0359],["2022-09",0.543],["2022-10",0.3135],["2022-11",0.1106],["2022-12",-0.3533],["2023-01",0.7949],["2023-02",-0.0751],["2023-03",0.2832],["2023-04",-0.2474],["2023-05",0.4984],["2023-06",0.0785],["2023-07",0.0193],["2023-08",0.1476],["2023-09",0.066],["2024-04",-0.2195],["2024-05",0.2813],["2024-06",0.2884],["2024-07",-0.4756],["2024-08",-0.2476],["2024-09",0.3504],["2024-10",-0.3296],["2024-11",0.1242],["2024-12",0.2467],["2025-01",0.1652],["2025-02",-0.354],["2025-03",-0.3364],["2025-04",0.1544],["2025-05",0.467],["2025-06",0.269],["2025-07",-0.0194],["2025-08",-0.1654],["2025-09",0.0063],["2025-10",0.1044],["2025-11",-0.5219],["2025-12",0.2027],["2026-01",-0.3207],["2026-02",-0.3872],["2026-03",-0.0303],["2026-04",0.2639]];
+    var TM=[["2021-10",0.2395],["2021-11",-0.1808],["2021-12",0.1861],["2022-01",-0.0629],["2022-02",-0.3589],["2022-03",-0.2176],["2022-04",-0.3709],["2022-05",-0.2802],["2022-06",-0.2105],["2022-07",0.3141],["2022-08",-0.0966],["2022-09",-0.3557],["2022-10",-0.3942],["2022-11",0.1599],["2022-12",0.0735],["2023-01",0.2844],["2023-02",0.3964],["2023-03",0.3751],["2023-04",0.4183],["2023-05",0.4051],["2023-06",0.3789],["2023-07",0.442],["2023-08",0.3452],["2023-09",-0.2473],["2024-04",0.4177],["2024-05",0.4134],["2024-06",0.4612],["2024-07",0.4248],["2024-08",0.4318],["2024-09",0.4258],["2024-10",0.4269],["2024-11",0.4472],["2024-12",0.382],["2025-01",0.3216],["2025-02",0.4124],["2025-03",0.4464],["2025-04",0.4176],["2025-05",0.4169],["2025-06",0.463],["2025-07",0.4531],["2025-08",0.419],["2025-09",0.3931],["2025-10",0.4407],["2025-11",0.4218],["2025-12",0.2014],["2026-01",0.4197],["2026-02",0.4205],["2026-03",0.401],["2026-04",0.4042]];
+    var LAST_PRE="2023-09", EST="2022-12", DOC="2023-12";
+    function ord(k){ var a=k.split("-"); return (+a[0])*12 + (+a[1]) - 1; }
+    var t0=ord("2021-10"), t1=ord("2026-04"), span=t1-t0;
+
+    function fit(){
+      var r=cv.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2);
+      cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr);
+      var c=cv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0); return {w:r.width,h:r.height,c:c};
+    }
+    function draw(prog){
+      var f=fit(), c=f.c, W=f.w, H=f.h;
+      var L=46, R=10, T=38, GAP=26;
+      var ph=(H-T-GAP-26)/2, topY=T, botY=T+ph+GAP;
+      var IW=W-L-R;
+      function X(k){ return L + (ord(k)-t0)/span*IW; }
+      c.clearRect(0,0,W,H);
+
+      /* shaded training window */
+      c.fillStyle="#232a38";
+      c.fillRect(X("2021-10")-2, topY, X(LAST_PRE)-X("2021-10")+4, ph);
+      c.fillRect(X("2021-10")-2, botY, X(LAST_PRE)-X("2021-10")+4, ph);
+
+      /* zero lines */
+      c.strokeStyle="#39425420"; c.lineWidth=1;
+      [topY+ph*0.5, botY+ph*0.62].forEach(function(y){
+        c.beginPath(); c.moveTo(L,y); c.lineTo(W-R,y); c.stroke();
+      });
+
+      /* IC bars */
+      var icMax=0.8, bw=Math.max(2, IW/span*0.62);
+      c.fillStyle="#e8eaef";
+      IC.forEach(function(d,i){
+        if(i/IC.length > prog) return;
+        var x=X(d[0]), z=topY+ph*0.5, h=d[1]/icMax*(ph*0.46);
+        c.fillRect(x-bw/2, h>=0?z-h:z, bw, Math.abs(h));
+      });
+
+      /* template line, broken across the buffer */
+      c.strokeStyle="#54d2c8"; c.lineWidth=1.6; c.lineJoin="round";
+      var started=false, prevOrd=null;
+      c.beginPath();
+      TM.forEach(function(d,i){
+        if(i/TM.length > prog) return;
+        var o=ord(d[0]), x=X(d[0]), y=botY+ph*0.62-(d[1]/0.6)*(ph*0.5);
+        if(!started || (prevOrd!==null && o-prevOrd>1)){ c.moveTo(x,y); started=true; }
+        else c.lineTo(x,y);
+        prevOrd=o;
+      });
+      c.stroke();
+
+      /* boundary rules */
+      function rule(k,col,dash,lab,side){
+        var x=X(k)+ (IW/span)/2;
+        c.save(); c.setLineDash(dash); c.strokeStyle=col; c.lineWidth=1.2;
+        c.beginPath(); c.moveTo(x,topY-8); c.lineTo(x,botY+ph); c.stroke(); c.restore();
+        c.fillStyle=col; c.font="500 10px "+'"IBM Plex Mono", monospace';
+        c.textAlign=side; c.fillText(lab, side==="right"?x-5:x+5, topY-16);
+      }
+      if(prog>0.97){
+        rule(EST,"#54d2c8",[2,3],"located 2022-12","right");
+        rule(DOC,"#e0a92e",[5,4],"documented 2023-12","left");
+      }
+
+      /* panel labels + axis years */
+      c.font="500 11px "+'"IBM Plex Mono", monospace'; c.textAlign="left";
+      [["cross-sectional IC \u2014 needs returns", topY+11],
+       ["answer repetition \u2014 needs no returns", botY+11]].forEach(function(d){
+        var w=c.measureText(d[0]).width;
+        c.fillStyle="#0a0d13"; c.globalAlpha=0.82;
+        c.fillRect(L-4, d[1]-10, w+8, 14);
+        c.globalAlpha=1; c.fillStyle="#a3abba"; c.fillText(d[0], L, d[1]);
+      });
+      c.fillStyle="#8a93a3"; c.font="10px "+'"IBM Plex Mono", monospace'; c.textAlign="center";
+      ["2022","2023","2024","2025","2026"].forEach(function(y){
+        var k=y+"-01"; c.fillText(y, X(k), H-8);
+      });
+    }
+
+    var animating=false;
+    function run(){
+      if(animating) return; animating=true;
+      if(reduce){ draw(1); return; }
+      var t=0;
+      (function step(){
+        t+=0.022; draw(Math.min(1,t));
+        if(t<1.02) requestAnimationFrame(step);
+      })();
+    }
+    window.addEventListener("resize", function(){ draw(1); });
+    if(!("IntersectionObserver" in window)){ run(); }
+    else { var lo=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ run(); lo.disconnect(); } }); },{threshold:0.2}); lo.observe(cv); }
+  })();
 
   /* ---------- grow bars on reveal ---------- */
   function growIn(container){
