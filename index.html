@@ -651,8 +651,9 @@
           <p class="caveat"><b>Caveat</b>One subject carries the full contrast, so this is a protocol and a demonstration, not a claim about language models as a class. The sharpest version of the effect, measured inside a single behavioural segment, sits at p 0.059 and does not clear five percent. The provider retired the model mid project, so its cached responses are now the only record and no part of the result can be re-run against the vendor.</p>
 
           <div class="clinks">
+            <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7485818">Paper on SSRN <span class="arr">&rarr;</span></a>
             <a href="https://github.com/hoangbach619/llm-alpha-leakage">Code <span class="arr">&rarr;</span></a>
-            <a href="https://github.com/hoangbach619/llm-alpha-leakage/blob/preprint/docs/methodology.qmd">Methodology <span class="arr">&rarr;</span></a>
+            <a href="https://github.com/hoangbach619/llm-alpha-leakage/blob/master/docs/methodology.qmd">Methodology <span class="arr">&rarr;</span></a>
           </div>
         </article>
 
@@ -1428,43 +1429,80 @@ completed  <span class="ok">success</span>  CI  main
     var cv=document.getElementById("heroBg"); if(!cv) return;
     var hero=cv.parentNode, ctx=cv.getContext("2d");
     var dpr=Math.min(window.devicePixelRatio||1,2);
-    var W=0, H=0, phase=0, raf=null, paths=[];
-    var COLORS=["rgba(201,162,39,0.13)","rgba(143,184,154,0.11)"]; // brass, sage — kept faint so the headline leads
+    var W=0, H=0, raf=null, layers=[];
     var seed=987654321;
     function rng(){ seed^=seed<<13; seed^=seed>>>17; seed^=seed<<5; return ((seed>>>0)/4294967296); }
-    function gauss(){ var u,v,s; do{u=rng()*2-1;v=rng()*2-1;s=u*u+v*v;}while(s>=1||s===0); return u*Math.sqrt(-2*Math.log(s)/s); }
+    function gauss(){ var u,v,sq; do{u=rng()*2-1;v=rng()*2-1;sq=u*u+v*v;}while(sq>=1||sq===0); return u*Math.sqrt(-2*Math.log(sq)/sq); }
+
+    /* Three depth planes. Far paths are thin, faint and slow; near paths are
+       heavier, warmer and quicker. The speed difference is what reads as depth:
+       one plane of identical lines just looks like wallpaper. */
+    var PLANES=[
+      {n:7, w:0.6, alpha:0.055, speed:0.09, vol:0.5,  hue:"143,184,154"},
+      {n:6, w:1.0, alpha:0.105, speed:0.19, vol:0.85, hue:"143,184,154"},
+      {n:3, w:1.7, alpha:0.20,  speed:0.34, vol:1.3,  hue:"201,162,39"}
+    ];
 
     function build(){
       var r=hero.getBoundingClientRect(); W=r.width; H=r.height;
       cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
-      var n=90, count=Math.max(9, Math.min(16, Math.round(W/95)));
-      paths=[];
-      for(var p=0;p<count;p++){
-        // raw random walk, then bridge so y[0]==y[n] -> seamless horizontal tiling
-        var raw=new Float64Array(n+1); raw[0]=0;
-        for(var i=1;i<=n;i++) raw[i]=raw[i-1]+gauss();
-        var amp=H*(0.06+rng()*0.06)/Math.max(1,Math.sqrt(n)); // modest vertical wander
-        var base=H*(0.12+0.76*(p+0.5)/count);
-        var ys=new Float64Array(n+1);
-        for(var k=0;k<=n;k++){ var bridged=raw[k]-(k/n)*raw[n]; ys[k]=base+bridged*amp; }
-        paths.push({ys:ys, color:COLORS[p%2]});
-      }
+      seed=987654321;
+      var steps=110;
+      layers=PLANES.map(function(pl){
+        var paths=[];
+        for(var i=0;i<pl.n;i++){
+          var raw=new Float64Array(steps+1); raw[0]=0;
+          for(var k=1;k<=steps;k++) raw[k]=raw[k-1]+gauss();
+          var amp=H*(0.05+rng()*0.075)*pl.vol/Math.sqrt(steps);
+          var base=H*(0.08+0.84*(i+0.5+rng()*0.35)/pl.n);
+          var ys=new Float64Array(steps+1);
+          for(var j=0;j<=steps;j++){ ys[j]=base+(raw[j]-(j/steps)*raw[steps])*amp; }
+          paths.push(ys);
+        }
+        return {cfg:pl, paths:paths, phase:rng()*W};
+      });
     }
-    function drawPathAt(pth, xoff){
-      var ys=pth.ys, n=ys.length-1, dx=W/n;
+
+    function ledger(){
+      /* faint vertical rules, like ruled ledger paper */
+      ctx.save(); ctx.strokeStyle="rgba(236,230,216,0.022)"; ctx.lineWidth=1;
+      for(var x=0; x<W; x+=94){ ctx.beginPath(); ctx.moveTo(x+0.5,0); ctx.lineTo(x+0.5,H); ctx.stroke(); }
+      ctx.restore();
+    }
+
+    function wash(){
+      /* warm brass bloom top-left, so the field is not one flat tone */
+      var g=ctx.createRadialGradient(W*0.18,H*0.12,0, W*0.18,H*0.12, Math.max(W,H)*0.85);
+      g.addColorStop(0,"rgba(201,162,39,0.075)");
+      g.addColorStop(0.45,"rgba(201,162,39,0.018)");
+      g.addColorStop(1,"rgba(201,162,39,0)");
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    }
+
+    function stroke(ys, xoff, col, lw){
+      var n=ys.length-1, dx=W/n;
       ctx.beginPath(); ctx.moveTo(xoff, ys[0]);
       for(var i=1;i<=n;i++) ctx.lineTo(xoff+i*dx, ys[i]);
-      ctx.strokeStyle=pth.color; ctx.stroke();
+      ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.stroke();
     }
+
     function render(){
-      ctx.clearRect(0,0,W,H); ctx.lineWidth=1; ctx.lineJoin="round";
-      for(var p=0;p<paths.length;p++){
-        // two tiled copies for a seamless leftward loop
-        drawPathAt(paths[p], -phase);
-        drawPathAt(paths[p], W-phase);
+      ctx.clearRect(0,0,W,H);
+      wash(); ledger();
+      ctx.lineJoin="round"; ctx.lineCap="round";
+      for(var L=0;L<layers.length;L++){
+        var lay=layers[L], c=lay.cfg, col="rgba("+c.hue+","+c.alpha+")";
+        for(var i=0;i<lay.paths.length;i++){
+          stroke(lay.paths[i], -lay.phase, col, c.w);
+          stroke(lay.paths[i], W-lay.phase, col, c.w);
+        }
       }
     }
-    function animate(){ phase=(phase+0.25)%W; render(); raf=requestAnimationFrame(animate); }
+
+    function animate(){
+      for(var L=0;L<layers.length;L++){ layers[L].phase=(layers[L].phase+layers[L].cfg.speed)%W; }
+      render(); raf=requestAnimationFrame(animate);
+    }
 
     function startStatic(){ if(raf){cancelAnimationFrame(raf);raf=null;} build(); render(); }
     function startAnim(){ if(raf){cancelAnimationFrame(raf);raf=null;} build(); raf=requestAnimationFrame(animate); }
@@ -1472,7 +1510,6 @@ completed  <span class="ok">success</span>  CI  main
     if(reduce){ startStatic(); }
     else {
       startAnim();
-      // pause when hero scrolled out of view (saves work)
       if("IntersectionObserver" in window){
         var vo=new IntersectionObserver(function(es){ es.forEach(function(e){
           if(e.isIntersecting){ if(!raf) raf=requestAnimationFrame(animate); }
@@ -1481,7 +1518,7 @@ completed  <span class="ok">success</span>  CI  main
         vo.observe(hero);
       }
     }
-    var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(reduce) startStatic(); else { phase=0; build(); } },150); });
+    var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(reduce) startStatic(); else build(); },150); });
   })();
 })();
 </script>
