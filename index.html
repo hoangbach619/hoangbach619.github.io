@@ -715,9 +715,7 @@
           <p class="caveat"><b>Caveat</b>One subject carries the full contrast, so this is a protocol and a demonstration, not a claim about language models as a class. The sharpest version of the effect, measured inside a single behavioural segment, sits at p 0.059 and does not clear five percent. The provider retired the model mid project, so its cached responses are now the only record and no part of the result can be re-run against the vendor.</p>
 
           <div class="clinks">
-            <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7485818">Paper on SSRN <span class="arr">&rarr;</span></a>
-            <a href="https://github.com/hoangbach619/llm-alpha-leakage">Code <span class="arr">&rarr;</span></a>
-            <a href="https://github.com/hoangbach619/llm-alpha-leakage/blob/master/docs/methodology.qmd">Methodology <span class="arr">&rarr;</span></a>
+            <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7485818">Read the paper on SSRN <span class="arr">&rarr;</span></a>
           </div>
         </article>
 
@@ -1308,9 +1306,14 @@ completed  <span class="ok">success</span>  CI  main
 
   /* ---------- grow bars on reveal ---------- */
   function growIn(container){
+    /* The width is set directly rather than inside requestAnimationFrame. The
+       rAF was there to guarantee the browser had painted width:0 before the
+       change, so the CSS transition would run; but these rows are built at
+       script time and growIn only fires on intersection, so that paint has
+       long since happened. In practice the rAF callback was not delivering and
+       every bar stayed at zero width. */
     container.querySelectorAll("[data-w]").forEach(function(el){
-      if(reduce){ el.style.width=el.getAttribute("data-w"); }
-      else { requestAnimationFrame(function(){ el.style.width=el.getAttribute("data-w"); }); }
+      el.style.width=el.getAttribute("data-w");
     });
   }
   function observe(el, cb){
