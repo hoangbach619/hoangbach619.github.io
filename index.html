@@ -485,7 +485,8 @@
     position:absolute; top:4.2rem; right:calc(50% - var(--wrap)/2 - 18px);
     font-family:var(--serif); font-weight:400; font-size:clamp(5rem,11vw,9.5rem);
     line-height:0.8; letter-spacing:-0.04em; color:transparent;
-    -webkit-text-stroke:1px rgba(201,162,39,0.16);
+    -webkit-text-stroke:1.7px rgba(201,162,39,0.30);
+    transform:translateY(var(--numy,0)) rotate(var(--numr,0deg));
     pointer-events:none; z-index:0; user-select:none;
   }
   @media (max-width:1180px){ section[data-num]::before{right:18px; font-size:clamp(4rem,9vw,6rem); opacity:0.7} }
@@ -548,6 +549,19 @@
   }
   .card:hover::after{transform:scaleY(1)}
   @media (prefers-reduced-motion: reduce){ .card::after{transition:none} }
+
+  /* ============ section numerals ============
+     A native scroll-driven version of this (animation-timeline: view()) was
+     written and removed. It is a real feature and probably fine in a browser,
+     but it made headless rendering hang indefinitely, so it could not be
+     verified before shipping. The parallax below runs in the scroll handler
+     that already exists, and can be checked. */
+  section[data-num]::before{will-change:transform}
+
+  /* ============ magnetic buttons ============ */
+  .btn{will-change:transform}
+  .btn.mag{transition:transform .35s cubic-bezier(.2,.7,.3,1), background .2s ease, border-color .2s ease, color .2s ease}
+  .btn.mag.pull{transition:transform .08s linear}
 
 </style>
 </head>
@@ -1191,6 +1205,61 @@ completed  <span class="ok">success</span>  CI  main
     cards.forEach(function(c){ io.observe(c); });
   })();
 
+  /* ---------- section numerals drift as you pass them ---------- */
+  (function(){
+    if(reduce) return;
+    var secs=[].slice.call(document.querySelectorAll("section[data-num]"));
+    if(!secs.length) return;
+    var ticking=false;
+    function upd(){
+      var vh=window.innerHeight;
+      for(var i=0;i<secs.length;i++){
+        var r=secs[i].getBoundingClientRect();
+        if(r.bottom<-200 || r.top>vh+200) continue;
+        /* -1 when the section is entering, +1 when it is leaving */
+        var prog=(vh/2-(r.top+Math.min(r.height,vh)/2))/vh;
+        secs[i].style.setProperty("--numy",(prog*90).toFixed(1)+"px");
+        secs[i].style.setProperty("--numr",(prog*4).toFixed(2)+"deg");
+      }
+      ticking=false;
+    }
+    window.addEventListener("scroll",function(){
+      if(!ticking){ ticking=true; requestAnimationFrame(upd); }
+    },{passive:true});
+    window.addEventListener("resize",upd); upd();
+  })();
+
+  /* ---------- magnetic buttons ----------
+     Within a short radius the button leans toward the cursor and springs back
+     when it leaves. Pointer-fine only: on touch there is no cursor to lean
+     toward and the transform would just fight the tap. */
+  (function(){
+    if(reduce) return;
+    if(!window.matchMedia || !window.matchMedia("(pointer:fine)").matches) return;
+    var btns=[].slice.call(document.querySelectorAll(".btn"));
+    if(!btns.length) return;
+    btns.forEach(function(b){ b.classList.add("mag"); });
+    var R=90, PULL=0.32;
+    window.addEventListener("mousemove",function(e){
+      for(var i=0;i<btns.length;i++){
+        var b=btns[i], r=b.getBoundingClientRect();
+        var cx=r.left+r.width/2, cy=r.top+r.height/2;
+        var dx=e.clientX-cx, dy=e.clientY-cy;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<R+Math.max(r.width,r.height)/2){
+          b.classList.add("pull");
+          b.style.transform="translate("+(dx*PULL).toFixed(1)+"px,"+(dy*PULL).toFixed(1)+"px)";
+        } else if(b.style.transform){
+          b.classList.remove("pull");
+          b.style.transform="";
+        }
+      }
+    },{passive:true});
+    window.addEventListener("blur",function(){
+      btns.forEach(function(b){ b.classList.remove("pull"); b.style.transform=""; });
+    });
+  })();
+
   /* ---------- scroll progress ---------- */
   (function(){
     var bar=document.getElementById("progress"); if(!bar) return;
@@ -1587,11 +1656,22 @@ completed  <span class="ok">success</span>  CI  main
     var W=0,H=0,bw=0,bh=0,raf=null,t=0,motes=[];
     var SCALE=6;
 
+    /* Scroll coupling. lastY/vel track how fast the page is moving; vel decays
+       back to zero so the field settles when you stop. par is the smoothed
+       scroll offset that parallaxes the light. Tying the backdrop to the
+       reader's own movement is what stops it feeling like a looping video. */
+    var lastY=window.pageYOffset||0, vel=0, par=0;
+    window.addEventListener("scroll",function(){
+      var y=window.pageYOffset||0;
+      vel += Math.min(90, Math.abs(y-lastY));
+      lastY=y;
+    },{passive:true});
+
     var POOLS=[
-      {hue:"201,162,39", r:0.62, a:0.150, px:0.22,py:0.26, sx:0.00031,sy:0.00019, br:0.00017},
-      {hue:"143,184,154",r:0.52, a:0.105, px:0.78,py:0.34, sx:0.00023,sy:0.00029, br:0.00013},
-      {hue:"201,162,39", r:0.44, a:0.090, px:0.62,py:0.74, sx:0.00017,sy:0.00025, br:0.00021},
-      {hue:"120,150,130",r:0.70, a:0.070, px:0.30,py:0.82, sx:0.00013,sy:0.00011, br:0.00009}
+      {hue:"201,162,39", r:0.62, a:0.150, px:0.22,py:0.26, sx:0.00110,sy:0.00067, br:0.00062},
+      {hue:"143,184,154",r:0.52, a:0.105, px:0.78,py:0.34, sx:0.00081,sy:0.00103, br:0.00047},
+      {hue:"201,162,39", r:0.44, a:0.090, px:0.62,py:0.74, sx:0.00060,sy:0.00088, br:0.00075},
+      {hue:"120,150,130",r:0.70, a:0.070, px:0.30,py:0.82, sx:0.00046,sy:0.00039, br:0.00034}
     ];
 
     function size(){
@@ -1616,11 +1696,12 @@ completed  <span class="ok">success</span>  CI  main
       bctx.globalCompositeOperation="lighter";
       for(var i=0;i<POOLS.length;i++){
         var q=POOLS[i];
-        var cx=(q.px + 0.085*Math.sin(t*q.sx))*bw;
-        var cy=(q.py + 0.070*Math.cos(t*q.sy))*bh;
+        var depth=0.35+i*0.22;                       /* nearer pools shift more */
+        var cx=(q.px + 0.170*Math.sin(t*q.sx))*bw;
+        var cy=(q.py + 0.140*Math.cos(t*q.sy))*bh - par*depth*0.045;
         var breathe=0.78+0.30*Math.sin(t*q.br);          /* the breath */
         var rad=q.r*Math.max(bw,bh)*0.75*breathe;
-        var alpha=q.a*(0.70+0.42*Math.sin(t*q.br*1.31+i));
+        var alpha=q.a*(0.70+0.42*Math.sin(t*q.br*1.31+i))*(1+Math.min(0.55,vel*0.006));
         var g=bctx.createRadialGradient(cx,cy,0,cx,cy,rad);
         g.addColorStop(0,"rgba("+q.hue+","+alpha.toFixed(4)+")");
         g.addColorStop(0.55,"rgba("+q.hue+","+(alpha*0.28).toFixed(4)+")");
@@ -1631,14 +1712,25 @@ completed  <span class="ok">success</span>  CI  main
     }
 
     function dust(){
+      /* At rest the motes are points drifting upward. As the page moves they
+         stretch along the direction of travel, the way dust does in a long
+         exposure, then relax back when you stop. */
+      var streak=Math.min(26, vel*0.42);
       ctx.save(); ctx.globalCompositeOperation="lighter";
+      ctx.lineCap="round";
       for(var i=0;i<motes.length;i++){
         var m=motes[i];
-        m.y-=m.sp; if(m.y<-6){ m.y=H+6; m.x=Math.random()*W; }
+        m.y-=m.sp*(1+vel*0.06); if(m.y<-30){ m.y=H+30; m.x=Math.random()*W; }
         var x=m.x+Math.sin(t*0.0006+m.ph)*m.am;
         var tw=0.65+0.35*Math.sin(t*0.0022+m.ph*2.1);
-        ctx.fillStyle="rgba(236,230,216,"+(m.a*tw).toFixed(3)+")";
-        ctx.beginPath(); ctx.arc(x,m.y,m.r,0,Math.PI*2); ctx.fill();
+        var col="rgba(236,230,216,"+(m.a*tw).toFixed(3)+")";
+        if(streak>1.5){
+          ctx.strokeStyle=col; ctx.lineWidth=m.r*1.5;
+          ctx.beginPath(); ctx.moveTo(x,m.y); ctx.lineTo(x,m.y+streak*(0.5+m.r)); ctx.stroke();
+        } else {
+          ctx.fillStyle=col;
+          ctx.beginPath(); ctx.arc(x,m.y,m.r,0,Math.PI*2); ctx.fill();
+        }
       }
       ctx.restore();
     }
@@ -1650,7 +1742,14 @@ completed  <span class="ok">success</span>  CI  main
       ctx.drawImage(buf,0,0,bw,bh,0,0,W,H);
       dust();
     }
-    function loop(){ t+=16; render(); raf=requestAnimationFrame(loop); }
+    function loop(){
+      t+=16;
+      vel*=0.90;                                   /* settle when scrolling stops */
+      if(vel<0.02) vel=0;
+      par += ((window.pageYOffset||0) - par)*0.06; /* smoothed, so it glides */
+      render();
+      raf=requestAnimationFrame(loop);
+    }
 
     size();
     if(reduce){ t=4200; render(); }
