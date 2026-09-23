@@ -472,6 +472,65 @@
   .btn.primary:hover{transform:translateY(-1px)}
   .btn{transition:transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease}
 
+  /* ============ editorial: ghosted section numerals ============ */
+  section{position:relative}
+  section[data-num] > .wrap{position:relative; z-index:1}
+  section[data-num]::before{
+    content:attr(data-num);
+    position:absolute; top:4.2rem; right:calc(50% - var(--wrap)/2 - 18px);
+    font-family:var(--serif); font-weight:400; font-size:clamp(5rem,11vw,9.5rem);
+    line-height:0.8; letter-spacing:-0.04em; color:transparent;
+    -webkit-text-stroke:1px rgba(201,162,39,0.16);
+    pointer-events:none; z-index:0; user-select:none;
+  }
+  @media (max-width:1180px){ section[data-num]::before{right:18px; font-size:clamp(4rem,9vw,6rem); opacity:0.7} }
+  @media (max-width:760px){ section[data-num]::before{display:none} }
+
+  /* ============ full-bleed ticker ============ */
+  .ticker{
+    position:relative; overflow:hidden; padding:0; margin:3.5rem 0 0;
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    background:linear-gradient(90deg, var(--bg-2), var(--panel), var(--bg-2));
+  }
+  .ticker::before, .ticker::after{
+    content:""; position:absolute; top:0; bottom:0; width:120px; z-index:2; pointer-events:none;
+  }
+  .ticker::before{left:0;  background:linear-gradient(90deg, var(--bg), transparent)}
+  .ticker::after{right:0; background:linear-gradient(270deg, var(--bg), transparent)}
+  .tick-track{
+    display:flex; gap:0; white-space:nowrap; will-change:transform;
+    animation:tickscroll 52s linear infinite;
+  }
+  .ticker:hover .tick-track{animation-play-state:paused}
+  @keyframes tickscroll{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .tick-item{
+    display:inline-flex; align-items:baseline; gap:0.55rem; padding:0.85rem 1.9rem;
+    font-family:var(--mono); font-size:0.82rem; color:var(--faint);
+    border-right:1px solid var(--border-soft);
+  }
+  .tick-item b{color:var(--brass); font-weight:600; font-size:0.95rem}
+  .tick-item .dn{color:var(--red)}
+  @media (prefers-reduced-motion: reduce){ .tick-track{animation:none} }
+
+  /* ============ hero: staggered entrance ============ */
+  .hero h1 .w{display:inline-block; will-change:transform,opacity}
+  .anim .hero h1 .w{opacity:0; transform:translateY(0.42em) rotate(1.2deg);
+    animation:wordIn .85s cubic-bezier(.19,.82,.28,1) forwards}
+  @keyframes wordIn{ to{opacity:1; transform:none} }
+  .hero .brassrule{
+    height:1px; background:linear-gradient(90deg,var(--brass),rgba(201,162,39,0));
+    margin:0 0 1.9rem; width:100%; max-width:var(--measure); transform-origin:left;
+  }
+  .anim .hero .brassrule{transform:scaleX(0); animation:ruleIn 1.1s cubic-bezier(.19,.82,.28,1) .45s forwards}
+  @keyframes ruleIn{ to{transform:scaleX(1)} }
+  @media (prefers-reduced-motion: reduce){
+    .anim .hero h1 .w{opacity:1; transform:none; animation:none}
+    .anim .hero .brassrule{transform:none; animation:none}
+  }
+
+  /* metric strip: tabular figures so counting up does not jitter the layout */
+  .metricstrip .v{font-variant-numeric:tabular-nums}
+
 </style>
 </head>
 <body>
@@ -502,6 +561,7 @@
     <canvas class="hero-bg" id="heroBg" aria-hidden="true"></canvas>
     <div class="wrap">
       <h1 id="hero-h1">Systematic trading research.</h1>
+      <div class="brassrule" aria-hidden="true"></div>
       <p class="intro">I'm Bach, an MSc student in Risk Management and Financial Engineering at Imperial College London. I build trading strategies, test them carefully, and write up what I actually find, including the ones that did not work.</p>
 
       <p class="strip-label">How every project is tested</p>
@@ -530,8 +590,12 @@
     </div>
   </section>
 
+  <div class="ticker" role="img" aria-label="Headline results across the four projects: LLM leakage Sharpe 2.14 in window against 0.40 out with the boundary located a year before the vendor cutoff; volatility risk premium walk-forward Sharpe 1.75 with 1.4 percent max drawdown and Newey-West t-statistic 3.04; trend Sharpe 0.876 on a pre-registered holdout with six of six crisis windows positive; the statistical arbitrage project reported as a null with a contrarian 8-K signal at t minus 3.16.">
+    <div class="tick-track" aria-hidden="true"><span class="tick-item">LLM leakage <b>Sharpe 2.14</b> <span>in window</span></span><span class="tick-item">out of window <b>0.40</b></span><span class="tick-item">boundary located <b>1 yr early</b> <span>before vendor cutoff</span></span><span class="tick-item">VRP <b>Sharpe 1.75</b> <span>walk-forward OOS</span></span><span class="tick-item">max drawdown <b class="dn">-1.4%</b></span><span class="tick-item">NW t-stat <b>3.04</b> <span>lag 21</span></span><span class="tick-item">Trend <b>Sharpe 0.876</b> <span>pre-registered holdout</span></span><span class="tick-item">crisis windows <b>6 / 6</b> <span>positive</span></span><span class="tick-item">Stat-arb <b>null</b> <span>reported as such</span></span><span class="tick-item">8-K signal <b class="dn">t -3.16</b> <span>contrarian</span></span><span class="tick-item">LLM leakage <b>Sharpe 2.14</b> <span>in window</span></span><span class="tick-item">out of window <b>0.40</b></span><span class="tick-item">boundary located <b>1 yr early</b> <span>before vendor cutoff</span></span><span class="tick-item">VRP <b>Sharpe 1.75</b> <span>walk-forward OOS</span></span><span class="tick-item">max drawdown <b class="dn">-1.4%</b></span><span class="tick-item">NW t-stat <b>3.04</b> <span>lag 21</span></span><span class="tick-item">Trend <b>Sharpe 0.876</b> <span>pre-registered holdout</span></span><span class="tick-item">crisis windows <b>6 / 6</b> <span>positive</span></span><span class="tick-item">Stat-arb <b>null</b> <span>reported as such</span></span><span class="tick-item">8-K signal <b class="dn">t -3.16</b> <span>contrarian</span></span></div>
+  </div>
+
   <!-- ===================== DEFLATED SHARPE WIDGET ===================== -->
-  <section id="method" aria-labelledby="dsr-h2">
+  <section id="method" data-num="01" aria-labelledby="dsr-h2">
     <div class="wrap">
       <p class="kicker">The core idea</p>
       <h2 id="dsr-h2">Why a strong backtest can still be luck</h2>
@@ -581,7 +645,7 @@
   </section>
 
   <!-- ===================== MONTE CARLO ===================== -->
-  <section id="montecarlo" aria-labelledby="mc-h2">
+  <section id="montecarlo" data-num="02" aria-labelledby="mc-h2">
     <div class="wrap">
       <p class="kicker">Method</p>
       <h2 id="mc-h2">Monte Carlo simulation</h2>
@@ -613,7 +677,7 @@
   </section>
 
   <!-- ===================== PROJECTS ===================== -->
-  <section id="projects" aria-labelledby="proj-h2">
+  <section id="projects" data-num="03" aria-labelledby="proj-h2">
     <div class="wrap">
       <p class="kicker">Research</p>
       <h2 id="proj-h2">Four projects. A paper, a strategy that worked, one that was marginal, one that was not.</h2>
@@ -762,7 +826,7 @@
   </section>
 
   <!-- ===================== REGIME TAPE ===================== -->
-  <section id="regimes" aria-labelledby="tape-h2">
+  <section id="regimes" data-num="04" aria-labelledby="tape-h2">
     <div class="wrap">
       <p class="kicker">Signal</p>
       <h2 id="tape-h2">Market regimes since 2007</h2>
@@ -782,7 +846,7 @@
   </section>
 
   <!-- ===================== VOLATILITY SURFACE ===================== -->
-  <section id="volsurface" aria-labelledby="surf-h2">
+  <section id="volsurface" data-num="05" aria-labelledby="surf-h2">
     <div class="wrap">
       <p class="kicker">Volatility</p>
       <h2 id="surf-h2">Implied volatility surface</h2>
@@ -801,7 +865,7 @@
   </section>
 
   <!-- ===================== PROCESS ===================== -->
-  <section id="process" aria-labelledby="proc-h2">
+  <section id="process" data-num="06" aria-labelledby="proc-h2">
     <div class="wrap">
       <p class="kicker">Timeline</p>
       <h2 id="proc-h2">How the work was built</h2>
@@ -852,7 +916,7 @@ completed  <span class="ok">success</span>  CI  main
   </section>
 
   <!-- ===================== SKILLS ===================== -->
-  <section id="skills" aria-labelledby="skills-h2">
+  <section id="skills" data-num="07" aria-labelledby="skills-h2">
     <div class="wrap">
       <p class="kicker">Toolkit</p>
       <h2 id="skills-h2">Skills</h2>
@@ -902,7 +966,7 @@ completed  <span class="ok">success</span>  CI  main
   </section>
 
   <!-- ===================== ABOUT ===================== -->
-  <section id="about" aria-labelledby="about-h2">
+  <section id="about" data-num="08" aria-labelledby="about-h2">
     <div class="wrap">
       <p class="kicker">Background</p>
       <h2 id="about-h2">About me</h2>
@@ -929,7 +993,7 @@ completed  <span class="ok">success</span>  CI  main
   </section>
 
   <!-- ===================== CONTACT ===================== -->
-  <section id="contact" class="contact" aria-labelledby="contact-h2">
+  <section id="contact" data-num="09" class="contact" aria-labelledby="contact-h2">
     <div class="wrap">
       <p class="kicker">Contact</p>
       <h2 id="contact-h2">Get in touch</h2>
@@ -1048,6 +1112,46 @@ completed  <span class="ok">success</span>  CI  main
     row.innerHTML='<span class="yr">'+d[0]+'</span><span class="axis"><span class="seg '+(pos?"pos":"neg")+'" data-w="'+w+'%"></span></span><span class="val '+(pos?"pos":"neg")+'">'+val+'</span>';
     ib.appendChild(row);
   });
+
+  /* ---------- hero: split the headline into words and stagger them ---------- */
+  (function(){
+    var h1=document.getElementById("hero-h1"); if(!h1) return;
+    document.documentElement.classList.add("anim");
+    var text=h1.textContent.trim();
+    h1.textContent="";
+    text.split(/\s+/).forEach(function(w,i){
+      var sp=document.createElement("span");
+      sp.className="w"; sp.textContent=w;
+      sp.style.animationDelay=(0.06+i*0.085).toFixed(3)+"s";
+      h1.appendChild(sp);
+      if(i<text.split(/\s+/).length-1) h1.appendChild(document.createTextNode(" "));
+    });
+  })();
+
+  /* ---------- metric strip: stagger the cells, never the values ----------
+     An earlier version counted the numbers up from zero. It looked good and it
+     meant the page displayed a Sharpe of 1.63 on its way to 1.75. On a page
+     whose whole claim is that the numbers are checked, that is not a trade
+     worth making, so only position and opacity animate. */
+  (function(){
+    var strip=document.querySelector(".metricstrip"); if(!strip) return;
+    var cells=[].slice.call(strip.querySelectorAll(".m"));
+    if(!cells.length || reduce || !("IntersectionObserver" in window)) return;
+    cells.forEach(function(el,i){
+      el.style.opacity="0";
+      el.style.transform="translateY(10px)";
+      el.style.transition="opacity .6s cubic-bezier(.19,.82,.28,1) "+(i*0.09).toFixed(2)+
+                          "s, transform .6s cubic-bezier(.19,.82,.28,1) "+(i*0.09).toFixed(2)+"s";
+    });
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(!e.isIntersecting) return;
+        cells.forEach(function(el){ el.style.opacity="1"; el.style.transform="none"; });
+        io.disconnect();
+      });
+    },{threshold:0.4});
+    io.observe(strip);
+  })();
 
   /* ---------- scroll progress ---------- */
   (function(){
