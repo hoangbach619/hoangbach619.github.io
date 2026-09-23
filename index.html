@@ -109,8 +109,9 @@
   .section-intro{color:var(--muted); max-width:var(--measure); margin:0 0 2.4rem; font-size:1.05rem}
 
   /* ---------- hero ---------- */
-  .hero{position:relative; overflow:hidden; padding:6.5rem 0 3rem}
-  .hero-bg{position:absolute; inset:0; z-index:0; pointer-events:none; display:block}
+  .hero{position:relative; padding:6.5rem 0 3rem}
+  .ambient{position:fixed; inset:0; width:100%; height:100%; z-index:-1;
+    pointer-events:none; display:block}
   .hero > .wrap{position:relative; z-index:1}
   .hero h1{
     font-family:var(--serif); font-weight:500;
@@ -272,7 +273,11 @@
     font-family:var(--mono); font-size:0.78rem}
   .hbar .lbl{color:var(--muted)}
   .hbar .track{height:13px; background:#0a0f0c; border:1px solid var(--border); border-radius:4px; overflow:hidden}
-  .hbar .fill{height:100%; width:0; background:var(--brass-bright); border-radius:3px;
+  /* display:block matters. The fill is a <span> inside the track, so as an
+     inline box height:100% resolved to nothing and the bar stayed invisible no
+     matter what width was set on it. The IC bars below never had this problem
+     because position:absolute blockifies them. */
+  .hbar .fill{display:block; height:100%; width:0; background:var(--brass-bright); border-radius:3px;
     transition:width 1s cubic-bezier(.2,.7,.2,1)}
   .hbar .val{text-align:right; color:var(--brass)}
   @media (max-width:520px){ .hbar{grid-template-columns:96px 1fr 56px; gap:0.5rem; font-size:0.72rem} }
@@ -486,32 +491,6 @@
   @media (max-width:1180px){ section[data-num]::before{right:18px; font-size:clamp(4rem,9vw,6rem); opacity:0.7} }
   @media (max-width:760px){ section[data-num]::before{display:none} }
 
-  /* ============ full-bleed ticker ============ */
-  .ticker{
-    position:relative; overflow:hidden; padding:0; margin:3.5rem 0 0;
-    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
-    background:linear-gradient(90deg, var(--bg-2), var(--panel), var(--bg-2));
-  }
-  .ticker::before, .ticker::after{
-    content:""; position:absolute; top:0; bottom:0; width:120px; z-index:2; pointer-events:none;
-  }
-  .ticker::before{left:0;  background:linear-gradient(90deg, var(--bg), transparent)}
-  .ticker::after{right:0; background:linear-gradient(270deg, var(--bg), transparent)}
-  .tick-track{
-    display:flex; gap:0; white-space:nowrap; will-change:transform;
-    animation:tickscroll 52s linear infinite;
-  }
-  .ticker:hover .tick-track{animation-play-state:paused}
-  @keyframes tickscroll{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
-  .tick-item{
-    display:inline-flex; align-items:baseline; gap:0.55rem; padding:0.85rem 1.9rem;
-    font-family:var(--mono); font-size:0.82rem; color:var(--faint);
-    border-right:1px solid var(--border-soft);
-  }
-  .tick-item b{color:var(--brass); font-weight:600; font-size:0.95rem}
-  .tick-item .dn{color:var(--red)}
-  @media (prefers-reduced-motion: reduce){ .tick-track{animation:none} }
-
   /* ============ hero: staggered entrance ============ */
   .hero h1 .w{display:inline-block; will-change:transform,opacity}
   .anim .hero h1 .w{opacity:0; transform:translateY(0.42em) rotate(1.2deg);
@@ -589,6 +568,7 @@
   </nav>
 </header>
 
+<canvas class="ambient" id="ambient" aria-hidden="true"></canvas>
 <div class="progress" id="progress" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
@@ -597,7 +577,6 @@
 
   <!-- ===================== HERO ===================== -->
   <section class="hero" aria-labelledby="hero-h1">
-    <canvas class="hero-bg" id="heroBg" aria-hidden="true"></canvas>
     <div class="wrap">
       <h1 id="hero-h1">Systematic trading research.</h1>
       <div class="brassrule" aria-hidden="true"></div>
@@ -629,9 +608,6 @@
     </div>
   </section>
 
-  <div class="ticker" role="img" aria-label="Headline results across the four projects: LLM leakage Sharpe 2.14 in window against 0.40 out with the boundary located a year before the vendor cutoff; volatility risk premium walk-forward Sharpe 1.75 with 1.4 percent max drawdown and Newey-West t-statistic 3.04; trend Sharpe 0.876 on a pre-registered holdout with six of six crisis windows positive; the statistical arbitrage project reported as a null with a contrarian 8-K signal at t minus 3.16.">
-    <div class="tick-track" aria-hidden="true"><span class="tick-item">LLM leakage <b>Sharpe 2.14</b> <span>in window</span></span><span class="tick-item">out of window <b>0.40</b></span><span class="tick-item">boundary located <b>1 yr early</b> <span>before vendor cutoff</span></span><span class="tick-item">VRP <b>Sharpe 1.75</b> <span>walk-forward OOS</span></span><span class="tick-item">max drawdown <b class="dn">-1.4%</b></span><span class="tick-item">NW t-stat <b>3.04</b> <span>lag 21</span></span><span class="tick-item">Trend <b>Sharpe 0.876</b> <span>pre-registered holdout</span></span><span class="tick-item">crisis windows <b>6 / 6</b> <span>positive</span></span><span class="tick-item">Stat-arb <b>null</b> <span>reported as such</span></span><span class="tick-item">8-K signal <b class="dn">t -3.16</b> <span>contrarian</span></span><span class="tick-item">LLM leakage <b>Sharpe 2.14</b> <span>in window</span></span><span class="tick-item">out of window <b>0.40</b></span><span class="tick-item">boundary located <b>1 yr early</b> <span>before vendor cutoff</span></span><span class="tick-item">VRP <b>Sharpe 1.75</b> <span>walk-forward OOS</span></span><span class="tick-item">max drawdown <b class="dn">-1.4%</b></span><span class="tick-item">NW t-stat <b>3.04</b> <span>lag 21</span></span><span class="tick-item">Trend <b>Sharpe 0.876</b> <span>pre-registered holdout</span></span><span class="tick-item">crisis windows <b>6 / 6</b> <span>positive</span></span><span class="tick-item">Stat-arb <b>null</b> <span>reported as such</span></span><span class="tick-item">8-K signal <b class="dn">t -3.16</b> <span>contrarian</span></span></div>
-  </div>
 
   <!-- ===================== DEFLATED SHARPE WIDGET ===================== -->
   <section id="method" data-num="01" aria-labelledby="dsr-h2">
@@ -1595,102 +1571,166 @@ completed  <span class="ok">success</span>  CI  main
     else { var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ start(); io.disconnect(); }});},{threshold:0.15}); io.observe(stage); }
   })();
 
-  /* ============ Hero background: drifting random-walk paths ============ */
+  /* ============ Ambient light field ============ */
   (function(){
-    var cv=document.getElementById("heroBg"); if(!cv) return;
-    var hero=cv.parentNode, ctx=cv.getContext("2d");
-    var dpr=Math.min(window.devicePixelRatio||1,2);
-    var W=0, H=0, raf=null, layers=[];
-    var seed=987654321;
-    function rng(){ seed^=seed<<13; seed^=seed>>>17; seed^=seed<<5; return ((seed>>>0)/4294967296); }
-    function gauss(){ var u,v,sq; do{u=rng()*2-1;v=rng()*2-1;sq=u*u+v*v;}while(sq>=1||sq===0); return u*Math.sqrt(-2*Math.log(sq)/sq); }
+    /* An ambient light field behind the whole page. Four pools of warm and cool
+       light drift on slow Lissajous paths while their radius and brightness
+       breathe on sine cycles whose periods share no common multiple, so the
+       field never returns to the same state twice. Dust drifts up through it.
 
-    /* Three depth planes. Far paths are thin, faint and slow; near paths are
-       heavier, warmer and quicker. The speed difference is what reads as depth:
-       one plane of identical lines just looks like wallpaper. */
-    var PLANES=[
-      {n:7, w:0.6, alpha:0.055, speed:0.09, vol:0.5,  hue:"143,184,154"},
-      {n:6, w:1.0, alpha:0.105, speed:0.19, vol:0.85, hue:"143,184,154"},
-      {n:3, w:1.7, alpha:0.20,  speed:0.34, vol:1.3,  hue:"201,162,39"}
+       The light is rendered to an offscreen buffer at a sixth of the resolution
+       and scaled up, which costs a thirty-sixth of the fill and gives a soft
+       falloff for free. Dust is drawn at full resolution on top. */
+    var cv=document.getElementById("ambient"); if(!cv) return;
+    var ctx=cv.getContext("2d");
+    var buf=document.createElement("canvas"), bctx=buf.getContext("2d");
+    var W=0,H=0,bw=0,bh=0,raf=null,t=0,motes=[];
+    var SCALE=6;
+
+    var POOLS=[
+      {hue:"201,162,39", r:0.62, a:0.150, px:0.22,py:0.26, sx:0.00031,sy:0.00019, br:0.00017},
+      {hue:"143,184,154",r:0.52, a:0.105, px:0.78,py:0.34, sx:0.00023,sy:0.00029, br:0.00013},
+      {hue:"201,162,39", r:0.44, a:0.090, px:0.62,py:0.74, sx:0.00017,sy:0.00025, br:0.00021},
+      {hue:"120,150,130",r:0.70, a:0.070, px:0.30,py:0.82, sx:0.00013,sy:0.00011, br:0.00009}
     ];
 
-    function build(){
-      var r=hero.getBoundingClientRect(); W=r.width; H=r.height;
-      cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
-      seed=987654321;
-      var steps=110;
-      layers=PLANES.map(function(pl){
-        var paths=[];
-        for(var i=0;i<pl.n;i++){
-          var raw=new Float64Array(steps+1); raw[0]=0;
-          for(var k=1;k<=steps;k++) raw[k]=raw[k-1]+gauss();
-          var amp=H*(0.05+rng()*0.075)*pl.vol/Math.sqrt(steps);
-          var base=H*(0.08+0.84*(i+0.5+rng()*0.35)/pl.n);
-          var ys=new Float64Array(steps+1);
-          for(var j=0;j<=steps;j++){ ys[j]=base+(raw[j]-(j/steps)*raw[steps])*amp; }
-          paths.push(ys);
-        }
-        return {cfg:pl, paths:paths, phase:rng()*W};
-      });
+    function size(){
+      var r=Math.min(window.devicePixelRatio||1,2);
+      W=window.innerWidth; H=window.innerHeight;
+      cv.width=Math.round(W*r); cv.height=Math.round(H*r);
+      ctx.setTransform(r,0,0,r,0,0);
+      bw=Math.max(1,Math.round(W/SCALE)); bh=Math.max(1,Math.round(H/SCALE));
+      buf.width=bw; buf.height=bh;
+      motes=[];
+      var n=Math.round(Math.min(70, W*H/26000));
+      for(var i=0;i<n;i++){
+        motes.push({x:Math.random()*W, y:Math.random()*H,
+                    r:0.5+Math.random()*1.1, sp:0.06+Math.random()*0.16,
+                    ph:Math.random()*Math.PI*2, am:6+Math.random()*16,
+                    a:0.05+Math.random()*0.16});
+      }
     }
 
-    function ledger(){
-      /* faint vertical rules, like ruled ledger paper */
-      ctx.save(); ctx.strokeStyle="rgba(236,230,216,0.022)"; ctx.lineWidth=1;
-      for(var x=0; x<W; x+=94){ ctx.beginPath(); ctx.moveTo(x+0.5,0); ctx.lineTo(x+0.5,H); ctx.stroke(); }
+    function field(){
+      bctx.clearRect(0,0,bw,bh);
+      bctx.globalCompositeOperation="lighter";
+      for(var i=0;i<POOLS.length;i++){
+        var q=POOLS[i];
+        var cx=(q.px + 0.085*Math.sin(t*q.sx))*bw;
+        var cy=(q.py + 0.070*Math.cos(t*q.sy))*bh;
+        var breathe=0.78+0.30*Math.sin(t*q.br);          /* the breath */
+        var rad=q.r*Math.max(bw,bh)*0.75*breathe;
+        var alpha=q.a*(0.70+0.42*Math.sin(t*q.br*1.31+i));
+        var g=bctx.createRadialGradient(cx,cy,0,cx,cy,rad);
+        g.addColorStop(0,"rgba("+q.hue+","+alpha.toFixed(4)+")");
+        g.addColorStop(0.55,"rgba("+q.hue+","+(alpha*0.28).toFixed(4)+")");
+        g.addColorStop(1,"rgba("+q.hue+",0)");
+        bctx.fillStyle=g; bctx.beginPath(); bctx.arc(cx,cy,rad,0,Math.PI*2); bctx.fill();
+      }
+      bctx.globalCompositeOperation="source-over";
+    }
+
+    function dust(){
+      ctx.save(); ctx.globalCompositeOperation="lighter";
+      for(var i=0;i<motes.length;i++){
+        var m=motes[i];
+        m.y-=m.sp; if(m.y<-6){ m.y=H+6; m.x=Math.random()*W; }
+        var x=m.x+Math.sin(t*0.0006+m.ph)*m.am;
+        var tw=0.65+0.35*Math.sin(t*0.0022+m.ph*2.1);
+        ctx.fillStyle="rgba(236,230,216,"+(m.a*tw).toFixed(3)+")";
+        ctx.beginPath(); ctx.arc(x,m.y,m.r,0,Math.PI*2); ctx.fill();
+      }
       ctx.restore();
-    }
-
-    function wash(){
-      /* warm brass bloom top-left, so the field is not one flat tone */
-      var g=ctx.createRadialGradient(W*0.18,H*0.12,0, W*0.18,H*0.12, Math.max(W,H)*0.85);
-      g.addColorStop(0,"rgba(201,162,39,0.075)");
-      g.addColorStop(0.45,"rgba(201,162,39,0.018)");
-      g.addColorStop(1,"rgba(201,162,39,0)");
-      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-    }
-
-    function stroke(ys, xoff, col, lw){
-      var n=ys.length-1, dx=W/n;
-      ctx.beginPath(); ctx.moveTo(xoff, ys[0]);
-      for(var i=1;i<=n;i++) ctx.lineTo(xoff+i*dx, ys[i]);
-      ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.stroke();
     }
 
     function render(){
       ctx.clearRect(0,0,W,H);
-      wash(); ledger();
-      ctx.lineJoin="round"; ctx.lineCap="round";
-      for(var L=0;L<layers.length;L++){
-        var lay=layers[L], c=lay.cfg, col="rgba("+c.hue+","+c.alpha+")";
-        for(var i=0;i<lay.paths.length;i++){
-          stroke(lay.paths[i], -lay.phase, col, c.w);
-          stroke(lay.paths[i], W-lay.phase, col, c.w);
-        }
-      }
+      field();
+      ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality="high";
+      ctx.drawImage(buf,0,0,bw,bh,0,0,W,H);
+      dust();
     }
+    function loop(){ t+=16; render(); raf=requestAnimationFrame(loop); }
 
-    function animate(){
-      for(var L=0;L<layers.length;L++){ layers[L].phase=(layers[L].phase+layers[L].cfg.speed)%W; }
-      render(); raf=requestAnimationFrame(animate);
-    }
+    size();
+    if(reduce){ t=4200; render(); }
+    else { loop(); }
 
-    function startStatic(){ if(raf){cancelAnimationFrame(raf);raf=null;} build(); render(); }
-    function startAnim(){ if(raf){cancelAnimationFrame(raf);raf=null;} build(); raf=requestAnimationFrame(animate); }
+    var rt2; window.addEventListener("resize",function(){
+      clearTimeout(rt2); rt2=setTimeout(function(){ size(); if(reduce) render(); },160);
+    });
 
-    if(reduce){ startStatic(); }
-    else {
-      startAnim();
-      if("IntersectionObserver" in window){
-        var vo=new IntersectionObserver(function(es){ es.forEach(function(e){
-          if(e.isIntersecting){ if(!raf) raf=requestAnimationFrame(animate); }
-          else if(raf){ cancelAnimationFrame(raf); raf=null; }
-        }); },{threshold:0});
-        vo.observe(hero);
-      }
-    }
-    var rt; window.addEventListener("resize",function(){ clearTimeout(rt); rt=setTimeout(function(){ if(reduce) startStatic(); else build(); },150); });
+    document.addEventListener("visibilitychange",function(){
+      if(reduce) return;
+      if(document.hidden){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
+      else if(!raf){ raf=requestAnimationFrame(loop); }
+    });
   })();
+
+  /* ============ Implied volatility surface (three.js, lazy) ============ */
+  (function(){
+    var stage=document.getElementById("surfStage"); if(!stage) return;
+    var inited=false;
+    function hasWebGL(){ try{ var c=document.createElement("canvas"); return !!(window.WebGLRenderingContext && (c.getContext("webgl")||c.getContext("experimental-webgl"))); }catch(e){ return false; } }
+    function ivFunc(mon,mat){ var smile=0.55*(mon-1)*(mon-1)/(0.18+mat), skew=-0.10*(mon-1), term=0.05*Math.sqrt(mat); return 0.16+smile+skew+term; }
+    function heat(v){ function mix(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
+      var teal=[0x54,0xd2,0xc8],amb=[0xe6,0xb2,0x3c],red=[0xec,0x6a,0x52];
+      return v<0.5 ? mix(teal,amb,v/0.5) : mix(amb,red,(v-0.5)/0.5); }
+
+    function fallback2D(){
+      var cv=document.createElement("canvas"); stage.appendChild(cv);
+      function draw(){ var r=stage.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2);
+        cv.width=r.width*dpr; cv.height=r.height*dpr; var g=cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0);
+        var W=r.width,H=r.height,nx=44,ny=30,pl=10,pt=10, pw=(W-2*pl)/nx, ph=(H-2*pt)/ny, mn=1e9,mx=-1e9,vals=[],i,j;
+        for(j=0;j<ny;j++){var row=[];for(i=0;i<nx;i++){var v=ivFunc(0.7+0.6*i/(nx-1),0.1+1.9*j/(ny-1));row.push(v);if(v<mn)mn=v;if(v>mx)mx=v;}vals.push(row);}
+        for(j=0;j<ny;j++)for(i=0;i<nx;i++){var c=heat((vals[j][i]-mn)/(mx-mn));g.fillStyle="rgb("+(c[0]|0)+","+(c[1]|0)+","+(c[2]|0)+")";g.fillRect(pl+i*pw,pt+j*ph,pw+1,ph+1);}
+      }
+      draw(); window.addEventListener("resize",draw);
+    }
+
+    function init3D(){
+      var W=stage.clientWidth,H=stage.clientHeight;
+      var scene=new THREE.Scene();
+      var camera=new THREE.PerspectiveCamera(45,W/H,0.1,100); camera.position.set(0,2.0,3.5); camera.lookAt(0,0,0);
+      var renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2)); renderer.setSize(W,H);
+      stage.appendChild(renderer.domElement);
+      var group=new THREE.Group(); scene.add(group);
+
+      var nx=48,nz=48,sx=2.2,sz=2.2,hy=1.4;
+      var geo=new THREE.PlaneGeometry(sx,sz,nx-1,nz-1); geo.rotateX(-Math.PI/2);
+      var pos=geo.attributes.position, colors=[], ivs=[], mn=1e9,mx=-1e9,k;
+      for(k=0;k<pos.count;k++){ var mon=1+(pos.getX(k)/sx)*0.6, mat=Math.max(0.05,1.05+(pos.getZ(k)/sz)*1.9), v=ivFunc(mon,mat); ivs.push(v); if(v<mn)mn=v; if(v>mx)mx=v; }
+      for(k=0;k<pos.count;k++){ var nv=(ivs[k]-mn)/(mx-mn); pos.setY(k,(nv-0.5)*hy); var c=heat(nv); colors.push(c[0]/255,c[1]/255,c[2]/255); }
+      pos.needsUpdate=true;
+      geo.setAttribute("color",new THREE.Float32BufferAttribute(colors,3)); geo.computeVertexNormals();
+      var mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:0.62,metalness:0.05,side:THREE.DoubleSide}));
+      group.add(mesh);
+      group.add(new THREE.LineSegments(new THREE.WireframeGeometry(geo), new THREE.LineBasicMaterial({color:0x0c0f16,transparent:true,opacity:0.16})));
+      scene.add(new THREE.AmbientLight(0xffffff,0.58));
+      var dir=new THREE.DirectionalLight(0xffffff,0.9); dir.position.set(2,4,2); scene.add(dir);
+      var dir2=new THREE.DirectionalLight(0x9fb6d0,0.35); dir2.position.set(-3,2,-2); scene.add(dir2);
+
+      var autoRot=!reduce, dragging=false, lx=0, ly=0, rotY=0.5, tilt=0.18;
+      function setRot(){ group.rotation.y=rotY; group.rotation.x=tilt; } setRot();
+      stage.addEventListener("pointerdown",function(e){ dragging=true; lx=e.clientX; ly=e.clientY; try{stage.setPointerCapture(e.pointerId);}catch(_){} });
+      stage.addEventListener("pointermove",function(e){ if(!dragging)return; rotY+=(e.clientX-lx)*0.008; tilt+=(e.clientY-ly)*0.006; tilt=Math.max(-0.15,Math.min(1.1,tilt)); lx=e.clientX; ly=e.clientY; setRot(); });
+      function up(){ dragging=false; } stage.addEventListener("pointerup",up); stage.addEventListener("pointercancel",up); stage.addEventListener("pointerleave",up);
+
+      (function animate(){ requestAnimationFrame(animate); if(autoRot && !dragging){ rotY+=0.0025; group.rotation.y=rotY; } renderer.render(scene,camera); })();
+      window.addEventListener("resize",function(){ var w=stage.clientWidth,h=stage.clientHeight; if(!w||!h)return; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h); });
+    }
+
+    function start(){ if(inited)return; inited=true;
+      if(!hasWebGL()){ fallback2D(); return; }
+      var s=document.createElement("script"); s.src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+      s.onload=function(){ try{ init3D(); }catch(e){ fallback2D(); } }; s.onerror=fallback2D;
+      document.head.appendChild(s);
+    }
+    if(!("IntersectionObserver" in window)){ start(); }
+    else { var io=new IntersectionObserver(function(es){es.forEach(function(e){ if(e.isIntersecting){ start(); io.disconnect(); }});},{threshold:0.15}); io.observe(stage); }
+  })();
+
 })();
 </script>
 </body>
